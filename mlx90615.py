@@ -1,24 +1,28 @@
 """
-MicroPython driver :
-https://github.com/rcolistete/MicroPython_MAX44009
-for MLX90615 IR temperature I2C sensor :
-https://www.melexis.com/en/product/mlx90615/
-Version: 0.1.1 @ 2020/04/16
+MicroPython driver for MLX90615 IR temperature I2C sensor :
+https://github.com/rcolistete/MicroPython_MLX90615_driver
+Version: 0.1.2 @ 2020/04/17
 Author: Roberto Colistete Jr. (roberto.colistete at gmail.com)
 License: MIT License (https://opensource.org/licenses/MIT)
 """
 
+__version__ = '0.1.2'
+
+
 import time
 
+
 MLX90615_I2C_DEFAULT_ADDR = const(0x5B)
-_REG_SLAVE_I2C_ADDRESS = const(0x10)   # EEPROM - slave I2C address
-_REG_EMISSIVITY = const(0x13)          # EEPROM - Emissivity
-_REG_ID_LOW = const(0x1E)              # EEPROM - ID number low
-_REG_ID_HIGH = const(0x1F)             # EEPROM - ID number high
-_REG_RAW_IR_DATA = const(0x25)         # RAM - raw IR data register
-_REG_AMBIENT_TEMP = const(0x26)        # RAM - ambient temperature register
-_REG_OBJECT_TEMP  = const(0x27)        # RAM - object temperature register 
-_EEPROM_TIME_MS = const(10)            # EEPROM - erase/write/read time in ms
+
+_REG_SLAVE_I2C_ADDRESS = const(0x10)   # EEPROM register - slave I2C address
+_REG_EMISSIVITY = const(0x13)          # EEPROM register - Emissivity
+_REG_ID_LOW = const(0x1E)              # EEPROM register - ID number low
+_REG_ID_HIGH = const(0x1F)             # EEPROM register - ID number high
+_REG_RAW_IR_DATA = const(0x25)         # RAM register - raw IR data register
+_REG_AMBIENT_TEMP = const(0x26)        # RAM register - ambient temperature register
+_REG_OBJECT_TEMP  = const(0x27)        # RAM register - object temperature register 
+
+_EEPROM_TIME_MS = const(100)           # erase/write/read EEPROM time in ms
 
 
 class MLX90615:
