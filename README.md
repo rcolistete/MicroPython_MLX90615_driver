@@ -15,7 +15,11 @@ From Melexis product page :
 
 ### Driver Functions
 
+All the functions can return error messagens using exceptions, so it is recommended to use [try/except](https://docs.python.org/3/tutorial/errors.html).
+
 | Function | Description |
 | -------- | ----------- |
-| read_ambient_temp(pep_check=True)   | reads the ambient temperature, returning a integer 100x Celsius degrees, so 2851 = 28.51 C |
-| read_object_temp(pep_check=True)   | reads the object temperature, returning a integer 100x Celsius degrees, so 3647 = 36.51 C |
+| read_ambient_temp(pec_check=True)   | reads the ambient temperature in the range [-40, 85] C, returning a integer 100x Celsius degree value, so 2851 = 28.51 C. 'pec_check' option, enabled by default, checks the reading with a CRC-8. There are error messages for reading error and invalid value. |
+| read_object_temp(pec_check=True)   | reads the object temperature in the range [-40, 115]C, returning a integer 100x Celsius degrees, so 3647 = 36.51 C. 'pec_check' option, enabled by default, checks the reading with a CRC-8. There are error messages for reading error and invalid value. |
+| read_raw_ir_data(pec_check=True)   | reads the raw IR data, returning a integer. 'pec_check' option, enabled by default, checks the reading with a CRC-8. There are error messages for reading error. |
+
