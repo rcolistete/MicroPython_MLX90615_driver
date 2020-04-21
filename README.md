@@ -15,9 +15,9 @@ From Melexis product page :
 
 ### Driver Functions
 
-All the functions can return error messagens using exceptions, so it is recommended to call them inside Python/MicroPython [try/except](https://docs.python.org/3/tutorial/errors.html).
+All the functions can return error messagens using exceptions, so it is recommended to call them inside Micro(Python) [try/except](https://docs.python.org/3/tutorial/errors.html).
 
-When the function has 'pec_check' (packet error code check) option, it is enabled by default and it checks the reading with a CRC-8, with error message for reading error.
+When the function has 'pec_check' (packet error code check) argument option, it is enabled by default and it checks the reading with a CRC-8, with error message for reading error.
 
 | Function | Description |
 | -------- | ----------- |
@@ -26,17 +26,78 @@ When the function has 'pec_check' (packet error code check) option, it is enable
 | read_raw_ir_data(pec_check=True) | reads the raw IR data, returning a 16 bits integer. |
 | read_id(pec_check=True) | reads the unique sensor ID, a 32 bits integer stored in EEPROM. |
 | read_eeprom(pec_check=True) | reads the EEPROM returning a list of 16 values, each one a 16 bits integer. |
-| read_emissivity(pec_check=True) | reads the emissivity stored in EEPROM, an integer from 0 to 100 corresponding to 0.0 to 1.0. |
-| set_emissivity(value, eeprom_read_check=True, eeprom_write_time=_EEPROM_DEFAULT_TIME_MS) | sets the emissivity to EEPROM, an integer from 5 to 100 corresponding to 0.05 to 1.00. 'eeprom_read_check' option, enabled by default, reads the value after writing to EEPROM to confirm. 'eeprom_write_time' defines the erase/write time in ms before and after EEPROM operations, the recommended and default value is 50 ms. With error messages for out of range of emissivity value and erasing/writing to EEPROM. | 
+| read_emissivity(pec_check=True) | reads the emissivity stored in EEPROM, an integer from 5 to 100 corresponding to emissivity from 0.05 to 1.00. |
+| set_emissivity(value, eeprom_read_check=True, eeprom_write_time=_EEPROM_DEFAULT_TIME_MS) | sets the emissivity to EEPROM, accepting an integer from 5 to 100 corresponding to emissivity from 0.05 to 1.00. 'eeprom_read_check' option, enabled by default, reads the value after writing to EEPROM to confirm. 'eeprom_write_time' defines the erase/write time in ms before and after EEPROM operations, the recommended and default value is 50 ms. With error messages for out of range of emissivity value and erasing/writing to EEPROM. | 
 | read_i2c_addres(pec_check=True) | reads the I2C address stored in EEPROM, a 7 bits integer. |
 | set_i2c_addres(addr, eeprom_read_check=False, eeprom_write_time=EEPROM_DEFAULT_TIME_MS) | sets the I2C address stored in EEPROM, a 7 bits integer, in the range of [0x08, 0x77] (8 to 119 in decimal).'eeprom_read_check' option, enabled by default, reads the value after writing to EEPROM to confirm. 'eeprom_write_time' defines the erase/write time in ms before and after EEPROM operations, the recommended and default value is 50 ms. With error messages for using current I2C address <> 0, out of range of EEPROM I2C address value and erasing/writing to EEPROM. |
 
 ### Examples
+
+#### Initialization
+
+Beware that MLX90615 I2C bus frequency should be in the range of 10-100 kHz. Lower frequencies than 100 kHz are usually needed for longer cables connecting the microcontroller to the MLX90615.
+
+If MLX90615 sensor is in a break-out board, it usually has pull-up resistors for I2C SDA and SCL pins. 
+But the microcontroller internal pull-up resistors may be needed depending on the lenght of cable connecting to the MLX90615,
+electromagnetic interference from the environment, etc.
+
+###### Pyboard v1.1
+```
+from machine import Pin
+import machine
+i2c = machine.I2C(scl='X9', sda='X10', freq=100000)   # Software I2C
+i2c.scan()   # returns : [91]  
+import mlx90615
+irsensor = mlx90615.MLX90615(i2c)
+```
+
+###### Pyboard D
+```
+from machine import Pin
+import machine
+machine.Pin('EN_3V3').on()
+Pin('PULL_SCL', Pin.OUT, value=1)     # 5.6k pull-up, if needed
+Pin('PULL_SDA', Pin.OUT, value=1)     # 5.6k pull-up, if needed
+i2c = machine.I2C(scl='X9', sda='X10', freq=100000)   # Software I2C
+i2c.scan()   # Output : [91]
+import mlx90615
+irsensor = mlx90615.MLX90615(i2c)
+```
+
+###### ESP8266
+```
+from machine import Pin
+import machine
+i2c = machine.I2C(sda=Pin(4), scl=Pin(5), freq=100000)   # Software I2C
+i2c.scan()   # Output : [91]
+import mlx90615
+irsensor = mlx90615.MLX90615(i2c)
+```
+
+###### ESP32
+```
+from machine import Pin
+import machine
+i2c = machine.I2C(sda=Pin(21), scl=Pin(22), freq=100000)   # Software I2C
+i2c.scan()   # Output : [91]
+import mlx90615
+irsensor = mlx90615.MLX90615(i2c)
+```
+
+###### Pycom boards like LoPy4
+```
+import machine
+i2c = machine.I2C(0, I2C.MASTER, baudrate=100000)   # Software I2C
+i2c.scan()   # Output : [91]
+import mlx90615
+irsensor = mlx90615.MLX90615(i2c)
+```
 
 ### Benchmarks
 
 ### References
 
 Other MLX90615 drivers :
+
 
 
