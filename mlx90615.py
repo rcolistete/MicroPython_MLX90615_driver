@@ -1,12 +1,12 @@
 """
 MicroPython driver for MLX90615 IR temperature I2C sensor :
 https://github.com/rcolistete/MicroPython_MLX90615_driver
-Version: 0.1.4 @ 2020/04/18
+Version: 0.1.5 @ 2020/04/19
 Author: Roberto Colistete Jr. (roberto.colistete at gmail.com)
 License: MIT License (https://opensource.org/licenses/MIT)
 """
 
-__version__ = '0.1.4'
+__version__ = '0.1.5'
 
 
 import time
@@ -127,17 +127,12 @@ class MLX90615:
         except Exception as err:
             raise Exception("Error reading EEPROM I2C address.\n{}".format(err))
 
-    def set_i2c_address(self, addr, eeprom_read_check=True, eeprom_write_time=_EEPROM_DEFAULT_TIME_MS):
+    def set_i2c_address(self, addr, eeprom_read_check=False, eeprom_write_time=_EEPROM_DEFAULT_TIME_MS):
         if self.address == 0:
             if (addr > 0x00) and (addr <= 0x80):
+                d = 0x3500 | addr       
                 try:
                     time.sleep_ms(eeprom_write_time)
-                    d = self.read16(_REG_SLAVE_I2C_ADDRESS) & 0xFF80
-                    time.sleep_ms(eeprom_write_time)
-                except Exception as err:
-                    raise Exception("Error reading before writing EEPROM I2C address.\n{}".format(err))
-                d |= addr       
-                try:
                     self.write16(_REG_SLAVE_I2C_ADDRESS, 0x0000, read_check=eeprom_read_check, eeprom_time=eeprom_write_time)
                     time.sleep_ms(eeprom_write_time)
                 except Exception as err:
