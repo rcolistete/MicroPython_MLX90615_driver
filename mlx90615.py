@@ -131,19 +131,21 @@ class MLX90615:
         if self.address == 0:
             if (addr > 0x00) and (addr <= 0x80):
                 try:
+                    time.sleep_ms(eeprom_write_time)
                     d = self.read16(_REG_SLAVE_I2C_ADDRESS) & 0xFF80
+                    time.sleep_ms(eeprom_write_time)
                 except Exception as err:
                     raise Exception("Error reading before writing EEPROM I2C address.\n{}".format(err))
                 d |= addr       
                 try:
                     self.write16(_REG_SLAVE_I2C_ADDRESS, 0x0000, read_check=eeprom_read_check, eeprom_time=eeprom_write_time)
-                    time.sleep_ms(_EEPROM_TIME_MS)
+                    time.sleep_ms(eeprom_write_time)
                 except Exception as err:
                     raise Exception("Error erasing EEPROM I2C address.\n{}".format(err))
                 else:
                     try:
                         self.write16(_REG_SLAVE_I2C_ADDRESS, d, read_check=eeprom_read_check, eeprom_time=eeprom_write_time)
-                        time.sleep_ms(_EEPROM_TIME_MS)
+                        time.sleep_ms(eeprom_write_time)
                     except Exception as err:
                         raise Exception("Error writing EEPROM I2C address.\n{}".format(err))
             else:
@@ -164,6 +166,7 @@ class MLX90615:
         if (value >= 5) and (value <= 100):
             e = round((value*0x4000)/100)
             try:
+                time.sleep_ms(eeprom_write_time)
                 self.write16(_REG_EMISSIVITY, 0x0000, read_check=eeprom_read_check, eeprom_time=eeprom_write_time)
                 time.sleep_ms(eeprom_write_time)
             except Exception as err:
