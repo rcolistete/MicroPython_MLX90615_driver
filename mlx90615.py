@@ -1,12 +1,12 @@
 """
 MicroPython driver for MLX90615 IR temperature I2C sensor :
 https://github.com/rcolistete/MicroPython_MLX90615_driver
-Version: 0.1.5 @ 2020/04/19
+Version: 0.1.6 @ 2020/04/20
 Author: Roberto Colistete Jr. (roberto.colistete at gmail.com)
 License: MIT License (https://opensource.org/licenses/MIT)
 """
 
-__version__ = '0.1.5'
+__version__ = '0.1.6'
 
 
 import time
@@ -129,7 +129,7 @@ class MLX90615:
 
     def set_i2c_address(self, addr, eeprom_read_check=False, eeprom_write_time=_EEPROM_DEFAULT_TIME_MS):
         if self.address == 0:
-            if (addr > 0x00) and (addr <= 0x80):
+            if (addr >= 0x08) and (addr <= 0x77):
                 d = 0x3500 | addr       
                 try:
                     time.sleep_ms(eeprom_write_time)
