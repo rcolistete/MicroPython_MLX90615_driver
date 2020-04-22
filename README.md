@@ -72,6 +72,7 @@ irsensor = mlx90615.MLX90615(i2c)
 ```
 
 ###### 3.1.2) [Pyboard D](https://pybd.io/hw/pybd_sfxw.html)
+```
 import machine
 import mlx90615
 machine.Pin('EN_3V3').on()
@@ -145,7 +146,8 @@ irsensor.read_i2c_address()      # Output : 92        # 92 = 0x5C, checked
 
 ### 5) References
 
-Other MLX90615 drivers :
-
+Other MLX90615 drivers :  
+- ['mlx90615-on-raspberryPi - paulvha GitHub'](https://github.com/paulvha/mlx90615-on-raspberryPi) is a C driver for Raspberry Pi, with many features and excelent documentation, including complementing documentation for the sensor, like citation of the time delay needed after erasing/writing to the MLX90615 EEPROM;
+- 
 
 
