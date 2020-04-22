@@ -27,19 +27,22 @@ When the function has 'pec_check' (packet error code check) argument option, it 
 | read_id(pec_check=True) | reads the unique sensor ID, a 32 bits integer stored in EEPROM. |
 | read_eeprom(pec_check=True) | reads the EEPROM returning a list of 16 values, each one a 16 bits integer. |
 | read_emissivity(pec_check=True) | reads the emissivity stored in EEPROM, an integer from 5 to 100 corresponding to emissivity from 0.05 to 1.00. |
-| set_emissivity(value, eeprom_read_check=True, eeprom_write_time=_EEPROM_DEFAULT_TIME_MS) | sets the emissivity to EEPROM, accepting an integer from 5 to 100 corresponding to emissivity from 0.05 to 1.00. 'eeprom_read_check' option, enabled by default, reads the value after writing to EEPROM to confirm. 'eeprom_write_time' defines the erase/write time in ms before and after EEPROM operations, the recommended and default value is 50 ms. With error messages for out of range of emissivity value and erasing/writing to EEPROM. | 
+| set_emissivity(value, eeprom_read_check=True, eeprom_write_time=EEPROM_DEFAULT_TIME_MS) | sets the emissivity to EEPROM, accepting an integer from 5 to 100 corresponding to emissivity from 0.05 to 1.00. 'eeprom_read_check' option, enabled by default, reads the value after writing to EEPROM to confirm. 'eeprom_write_time' defines the erase/write time in ms before and after EEPROM operations, the recommended and default value is 50 ms. With error messages for out of range of emissivity value and erasing/writing to EEPROM. | 
 | read_i2c_addres(pec_check=True) | reads the I2C address stored in EEPROM, a 7 bits integer. |
 | set_i2c_addres(addr, eeprom_read_check=False, eeprom_write_time=EEPROM_DEFAULT_TIME_MS) | sets the I2C address stored in EEPROM, a 7 bits integer, in the range of [0x08, 0x77] (8 to 119 in decimal).'eeprom_read_check' option, enabled by default, reads the value after writing to EEPROM to confirm. 'eeprom_write_time' defines the erase/write time in ms before and after EEPROM operations, the recommended and default value is 50 ms. With error messages for using current I2C address <> 0, out of range of EEPROM I2C address value and erasing/writing to EEPROM. |
+| read16(register, crc_check=True) | reads any MLX90615 register : EEPROM range is 0x10-0x1F, RAM range is 0x25-0x27 (see the MLX90615 datasheet, sections 8.3.3 and 8.3.4](https://www.melexis.com/en/documents/documentation/datasheets/datasheet-mlx90615)). The 'crc_check' argument option, enabled by default, checks the reading with a CRC-8, with error message when the CRC-8 doesn't match the PEC (Packet Error Code). | 
+| write16(register, data, read_check=True, eeprom_time=EEPROM_DEFAULT_TIME_MS) | writes to any MLX90615 register : EEPROM range is 0x10-0x1F, RAM range is 0x25-0x27 (see the MLX90615 datasheet, sections 8.3.3 and 8.3.4](https://www.melexis.com/en/documents/documentation/datasheets/datasheet-mlx90615)). The 'read_check' argument option, enabled by default, reads the value after writing to EEPROM to confirm. 'eeprom_time' defines the write time in ms after EEPROM writing, the recommended and default value is 50 ms. With error messages for out of range of emissivity value and erasing/writing to EEPROM. With error message if the reading value after writing doesn't check.
+
 
 ### Examples
 
 #### Initialization
 
-Beware that MLX90615 I2C bus frequency should be in the range of 10-100 kHz. Lower frequencies than 100 kHz are usually needed for longer cables connecting the microcontroller to the MLX90615.
+Beware that MLX90615 I2C bus frequency should be in the range of 10-100 kHz (see the [section '8.4.7 Timing specification' of the MLX90615 datasheet](https://www.melexis.com/en/documents/documentation/datasheets/datasheet-mlx90615)).
+I2C frequencies lower than 100 kHz are usually needed for longer cables connecting the microcontroller to the MLX90615 sensor.
 
 If MLX90615 sensor is in a break-out board, it usually has pull-up resistors for I2C SDA and SCL pins. 
-But the microcontroller internal pull-up resistors may be needed depending on the lenght of cable connecting to the MLX90615,
-electromagnetic interference from the environment, etc.
+But the microcontroller internal pull-up or external resistors may be needed depending on the lenght of cable connecting to the MLX90615, electromagnetic interference from the environment, etc.
 
 ###### Pyboard v1.1
 ```
@@ -87,7 +90,7 @@ irsensor = mlx90615.MLX90615(i2c)
 ###### Pycom boards like LoPy4
 ```
 import machine
-i2c = machine.I2C(0, I2C.MASTER, baudrate=100000)   # Software I2C
+i2c = machine.I2C(2, I2C.MASTER, baudrate=100000)   # Software I2C
 i2c.scan()   # Output : [91]
 import mlx90615
 irsensor = mlx90615.MLX90615(i2c)
