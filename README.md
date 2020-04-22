@@ -23,6 +23,7 @@ When the function has 'pec_check' (packet error code check) argument option, it 
 
 | Function | Description |
 | -------- | ----------- |
+| MLX90615(i2c, address=MLX90615_I2C_DEFAULT_ADDR) | class to construct an MLX90615 object. 'i2c' argument is I2C object created previously. 'address' option has default I2C address value 0x5B (91). |
 | read_ambient_temp(pec_check=True) | reads the ambient temperature in the range [-40, 85] C, returning a integer 100x the Celsius degree value, so 2851 = 28.51 C. There is also error message for invalid value. |
 | read_object_temp(pec_check=True) | reads the object temperature in the range [-40, 115] C, returning a integer 100x the Celsius degrees, so 3647 = 36.47 C. There is also error message for invalid value. |
 | read_raw_ir_data(pec_check=True) | reads the raw IR data, returning a 16 bits integer. |
@@ -49,53 +50,49 @@ But the microcontroller internal pull-up or external resistors may be needed dep
 
 ###### 3.1.1) Pyboard v1.1
 ```
-from machine import Pin
 import machine
+import mlx90615
 i2c = machine.I2C(scl='X9', sda='X10', freq=100000)   # Software I2C
 i2c.scan()   # returns : [91]  
-import mlx90615
 irsensor = mlx90615.MLX90615(i2c)
 ```
 
 ###### 3.1.2) Pyboard D
 ```
-from machine import Pin
 import machine
+import mlx90615
 machine.Pin('EN_3V3').on()
-Pin('PULL_SCL', Pin.OUT, value=1)     # 5.6k pull-up, if needed
-Pin('PULL_SDA', Pin.OUT, value=1)     # 5.6k pull-up, if needed
+machine.Pin('PULL_SCL', machine.Pin.OUT, value=1)     # 5.6k pull-up, if needed
+machine.Pin('PULL_SDA', machine.Pin.OUT, value=1)     # 5.6k pull-up, if needed
 i2c = machine.I2C(scl='X9', sda='X10', freq=100000)   # Software I2C
 i2c.scan()   # Output : [91]
-import mlx90615
 irsensor = mlx90615.MLX90615(i2c)
 ```
 
 ###### 3.1.3) ESP8266
 ```
-from machine import Pin
 import machine
-i2c = machine.I2C(sda=Pin(4), scl=Pin(5), freq=100000)   # Software I2C
-i2c.scan()   # Output : [91]
 import mlx90615
+i2c = machine.I2C(sda=machine.Pin(4), scl=machine.Pin(5), freq=100000)   # Software I2C
+i2c.scan()   # Output : [91]
 irsensor = mlx90615.MLX90615(i2c)
 ```
 
 ###### 3.1.4) ESP32
 ```
-from machine import Pin
 import machine
-i2c = machine.I2C(sda=Pin(21), scl=Pin(22), freq=100000)   # Software I2C
-i2c.scan()   # Output : [91]
 import mlx90615
+i2c = machine.I2C(sda=machine.Pin(21), scl=machine.Pin(22), freq=100000)   # Software I2C
+i2c.scan()   # Output : [91]
 irsensor = mlx90615.MLX90615(i2c)
 ```
 
 ###### 3.1.5) Pycom boards like LoPy4
 ```
 import machine
+import mlx90615
 i2c = machine.I2C(2, I2C.MASTER, baudrate=100000)   # Software I2C
 i2c.scan()   # Output : [91]
-import mlx90615
 irsensor = mlx90615.MLX90615(i2c)
 ```
 
@@ -115,11 +112,11 @@ irsensor.read_i2c_address()   # Output : 91        # 91 = 0x5B, default I2C addr
 ```
 
 #### 3.4) Setting the MLX90615 configuration
-Emissivity should be set depending on the material type
+[Emissivity depends on the material type](https://www.optotherm.com/emiss-table.htm), so it should be set to correctly measure the object temperature :
 ```
 irsensor.set_emissivity(97)   # e = 0.97
 ```
-The current I2C address of MLX90615 should be 0x00 to avoid errors while setting the new EEPROM I2C address :
+The current I2C address of MLX90615 should be 0x00 to avoid errors while setting the new I2C address in EEPROM :
 ```
 irsensor = mlx90615.MLX90615(i2c, address=0x00)
 irsensor.set_i2c_address(0x5C)
