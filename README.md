@@ -59,10 +59,10 @@ When the function has 'pec_check' (packet error code check) argument option, it 
 Beware that MLX90615 I2C bus frequency should be in the range of 10-100 kHz (see the [section '8.4.7 Timing specification' of the MLX90615 datasheet](https://www.melexis.com/en/documents/documentation/datasheets/datasheet-mlx90615)).
 I2C frequencies lower than 100 kHz are usually needed for longer cables connecting the microcontroller to the MLX90615 sensor.
 
-If MLX90615 sensor is in a break-out board, it usually has pull-up resistors for I2C SDA and SCL pins. 
+If MLX90615 sensor is on a break-out board, it usually has pull-up resistors for I2C SDA and SCL pins. 
 But the microcontroller internal pull-up or even external resistors may be needed depending on the lenght of cable connecting to the MLX90615, electromagnetic interference from the environment, etc.
 
-###### 3.1.1) [Pyboard (Lite) v1.x](http://docs.micropython.org/en/latest/pyboard/quickref.html)
+###### 3.1.1) [Pyboard (Lite) v1.x](http://docs.micropython.org/en/latest/pyboard/quickref.html#i2c-bus)
 ```
 import machine
 import mlx90615
@@ -71,7 +71,7 @@ i2c.scan()   # returns : [91]
 irsensor = mlx90615.MLX90615(i2c)
 ```
 
-###### 3.1.2) [Pyboard D](https://pybd.io/hw/pybd_sfxw.html)
+###### 3.1.2) [Pyboard D](https://pybd.io/hw/pybd_sfxw.html) and link above
 ```
 import machine
 import mlx90615
@@ -83,7 +83,7 @@ i2c.scan()   # Output : [91]
 irsensor = mlx90615.MLX90615(i2c)
 ```
 
-###### 3.1.3) [ESP8266](http://docs.micropython.org/en/latest/esp8266/quickref.html)
+###### 3.1.3) [ESP8266](http://docs.micropython.org/en/latest/esp8266/quickref.html#i2c-bus)
 ```
 import machine
 import mlx90615
@@ -92,7 +92,7 @@ i2c.scan()   # Output : [91]
 irsensor = mlx90615.MLX90615(i2c)
 ```
 
-###### 3.1.4) [ESP32](http://docs.micropython.org/en/latest/esp32/quickref.html)
+###### 3.1.4) [ESP32](http://docs.micropython.org/en/latest/esp32/quickref.html#i2c-bus)
 ```
 import machine
 import mlx90615
@@ -146,8 +146,10 @@ irsensor.read_i2c_address()      # Output : 92        # 92 = 0x5C, checked
 
 ### 5) References
 
-Other MLX90615 drivers :  
-- ['mlx90615-on-raspberryPi - paulvha GitHub'](https://github.com/paulvha/mlx90615-on-raspberryPi) is a C driver for Raspberry Pi, with many features and excelent documentation, including complementing documentation for the sensor, like citation of the time delay needed after erasing/writing to the MLX90615 EEPROM;
-- 
+Other MLX90615 drivers :
+1. ['Arduino library for MLX90615 module from Seeed-Studio'](https://github.com/Seeed-Studio/Digital_Infrared_Temperature_Sensor_MLX90615) has some features like optional SoftI2cMaster library, PEC/CRC-8 checking and writing to EEPROM registers;
+2. ['mlx90615-on-raspberryPi from paulvha'](https://github.com/paulvha/mlx90615-on-raspberryPi) is a C driver and interactive software for Raspberry Pi, with many features and excelent documentation complementing the official MLX96015 documentation, like citation of the time delay needed after erasing/writing to the MLX90615 EEPROM;
+3. ['A minimal Arduino library for Melexis MLX90615' from skiselev](https://github.com/skiselev/MLX90615) has only some reading functions;
+4. [MLX90615 library functions from Melexis](https://github.com/melexis/mlx90615-library) is a reference C++ driver with many features and good documentation;
 
 
