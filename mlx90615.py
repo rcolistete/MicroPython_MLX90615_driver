@@ -1,12 +1,12 @@
 """
 MicroPython driver for MLX90615 IR temperature I2C sensor :
 https://github.com/rcolistete/MicroPython_MLX90615_driver
-Version: 0.1.8 @ 2020/04/26
+Version: 0.1.9 @ 2020/04/26
 Author: Roberto Colistete Jr. (roberto.colistete at gmail.com)
 License: MIT License (https://opensource.org/licenses/MIT)
 """
 
-__version__ = '0.1.8'
+__version__ = '0.1.9'
 
 
 import time
@@ -17,6 +17,9 @@ MLX90615_I2C_DEFAULT_ADDR = const(0x5B)
 EEPROM_DEFAULT_TIME_MS = const(50)     # erase/write EEPROM time in ms
 
 _REG_SLAVE_I2C_ADDRESS = const(0x10)   # EEPROM register - slave I2C address
+_REG_PWM_TMIN = const(0x10)            # EEPROM register - PWM temperature minimum
+_REG_PWM_TRANGE = const(0x11)          # EEPROM register - PWM temperature range
+_REG_CONFIG = const(0x12)              # EEPROM register - Config
 _REG_EMISSIVITY = const(0x13)          # EEPROM register - Emissivity
 _REG_ID_LOW = const(0x1E)              # EEPROM register - ID number low
 _REG_ID_HIGH = const(0x1F)             # EEPROM register - ID number high
@@ -188,7 +191,61 @@ class MLX90615:
         p.value(0)
         time.sleep_ms(50)
         self.i2c.start()
-        time.sleep_ms(300)
-        if not (self.address in self.i2c.scan()):
-            raise Exception("I2C has not restarted with MLX90615.")
+        time.sleep_ms(500)
+        if ((self.address >= 0x08) and (self.address <= 0x77)) and (not (self.address in self.i2c.scan())):
+            raise Exception("I2C has not restarted with MLX90615 I2C address {:02x}.".format(self.address))
+
+    def pwm_to_i2c(self, scl_pin):
+        p = machine.Pin(scl_pin, machine.Pin.OUT)
+        p.value(0)
+        time.sleep_ms(100)
+        self.i2c.start()
+        if ((self.address >= 0x08) and (self.address <= 0x77)) and (not (self.address in self.i2c.scan())):
+            raise Exception("I2C has not restarted with MLX90615 I2C address {:02x}.".format(self.address))
             
+    def set_pwm_tmin_trange(self, tmin=0x355B, trange=0x09C3, eeprom_read_check=False, eeprom_write_time=EEPROM_DEFAULT_TIME_MS):
+        if self.address == 0:
+            try:
+                time.sleep_ms(eeprom_write_time)
+                self.write16(_REG_PWM_TMIN, 0x0000, read_check=eeprom_read_check, eeprom_time=eeprom_write_time)
+                time.sleep_ms(eeprom_write_time)
+                self.write16(_REG_PWM_TRANGE, 0x0000, read_check=eeprom_read_check, eeprom_time=eeprom_write_time)
+                time.sleep_ms(eeprom_write_time)
+            except Exception as err:
+                raise Exception("Error erasing EEPROM PWM TMIN/TRANGE.\n{}".format(err))
+            else:
+                try:
+                    self.write16(_REG_PWM_TMIN, tmin, read_check=eeprom_read_check, eeprom_time=eeprom_write_time)
+                    time.sleep_ms(eeprom_write_time)
+                    self.write16(_REG_PWM_TRANGE, trange, read_check=eeprom_read_check, eeprom_time=eeprom_write_time)
+                    time.sleep_ms(eeprom_write_time)
+                except Exception as err:
+                    raise Exception("Error writing EEPROM PWM TMIN/TRANGE.\n{}".format(err))
+        else:
+            raise Exception("Current I2C address of MLX90615 should be 0x00 to avoid errors while setting the new EEPROM PWM TMIN/TRANGE.")
+
+    def set_pwm_mode(self, pwm=False, pwm_fast=False, pwm_object=True, eeprom_read_check=True, eeprom_write_time=EEPROM_DEFAULT_TIME_MS):
+        try:
+            d = self.read16(_REG_CONFIG)
+        except Exception as err:
+            raise Exception("Error reading config register from EEPROM. {}".format(err))
+        else:
+            d &= 0xFFF8
+            if not pwm:
+                d |= 0x0001
+            if pwm_fast:
+                d |= 0x0002
+            if not pwm_object:
+                d |= 0x0004               
+            try:
+                time.sleep_ms(eeprom_write_time)
+                self.write16(_REG_CONFIG, 0x0000, read_check=eeprom_read_check, eeprom_time=eeprom_write_time)
+                time.sleep_ms(eeprom_write_time)
+            except Exception as err:
+                raise Exception("Error erasing EEPROM config register.\n{}".format(err))
+            else:
+                try:
+                    self.write16(_REG_CONFIG, d, read_check=eeprom_read_check, eeprom_time=eeprom_write_time)
+                    time.sleep_ms(eeprom_write_time)
+                except Exception as err:
+                    raise Exception("Error writing EEPROM config register.\n{}".format(err))
