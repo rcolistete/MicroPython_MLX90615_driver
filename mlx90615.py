@@ -1,15 +1,16 @@
 """
 MicroPython driver for MLX90615 IR temperature I2C sensor :
 https://github.com/rcolistete/MicroPython_MLX90615_driver
-Version: 0.1.7 @ 2020/04/21
+Version: 0.1.8 @ 2020/04/26
 Author: Roberto Colistete Jr. (roberto.colistete at gmail.com)
 License: MIT License (https://opensource.org/licenses/MIT)
 """
 
-__version__ = '0.1.7'
+__version__ = '0.1.8'
 
 
 import time
+import machine
 
 
 MLX90615_I2C_DEFAULT_ADDR = const(0x5B)
@@ -22,6 +23,7 @@ _REG_ID_HIGH = const(0x1F)             # EEPROM register - ID number high
 _REG_RAW_IR_DATA = const(0x25)         # RAM register - raw IR data register
 _REG_AMBIENT_TEMP = const(0x26)        # RAM register - ambient temperature register
 _REG_OBJECT_TEMP  = const(0x27)        # RAM register - object temperature register 
+_REG_SLEEP = const(0xC6)               # Sleep command
 
 
 class MLX90615:
@@ -173,3 +175,20 @@ class MLX90615:
                 raise Exception("Error : new I2C address {:02x} out of range (0x01 <= address <= 0x7F).".format(addr))
         else:
             raise Exception("Current I2C address of MLX90615 should be 0x00 to avoid errors while setting the new EEPROM I2C address.")
+
+    def sleep(self):
+        crc = self._crc8(0, self.address << 1)
+        crc = self._crc8(crc, _REG_SLEEP)
+        self.buf[0] = crc
+        self.i2c.writeto_mem(self.address, _REG_SLEEP, self.buf)
+        self.i2c.stop()
+
+    def wake(self, scl_pin):
+        p = machine.Pin(scl_pin, machine.Pin.OUT)
+        p.value(0)
+        time.sleep_ms(50)
+        self.i2c.start()
+        time.sleep_ms(300)
+        if not (self.address in self.i2c.scan()):
+            raise Exception("I2C has not restarted with MLX90615.")
+            
