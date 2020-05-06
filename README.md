@@ -6,7 +6,7 @@
 - reading and setting of all configurations in EEPROM;
 - checking the PEC (Packet Error Code, based on CRC-8) for each reading, as default;
 - use of I2C (SMBus);
-- enable/disable PWM mode, as well as functions to configure PWM;
+- enable/disable and configuration of PWM mode;
 - sleep and wake functions.
 
 ### 1) MLX90615
@@ -20,9 +20,9 @@ From Melexis product page :
 
 > Factory calibrated in wide temperature range: -20 to 85°C for sensor temperature and -40 to 115°C for object temperature.
 
-### 2) MicroPython driver definitions
+### 2) MicroPython/CircuitPython driver definitions
 
-These MicroPython drivers for MLX90615 are optimised for low memory usage :  
+These MicroPython/CircuitPython drivers for MLX90615 are optimised for low memory usage :  
 - by using and returning integer values as possible, as float values would allocate more RAM;
 - documentation is outside the code;
 - the 'no-errors' version has no error checking for reading the sensor, nor error messages;
@@ -46,11 +46,16 @@ When the function has 'pec_check' (packet error code check) argument option, it 
 | read_id(pec_check=True) | reads the unique sensor ID, a 32 bits integer stored in EEPROM. |
 | read_eeprom(pec_check=True) | reads the EEPROM returning a list of 16 values, each one a 16 bits integer. Very useful to save a backup of the EEPROM, including the factory calibration data. |
 | read_emissivity(pec_check=True) | reads the emissivity stored in EEPROM, an integer from 5 to 100 corresponding to emissivity from 0.05 to 1.00. |
-| set_emissivity(value, eeprom_read_check=True, eeprom_write_time=50) | sets the emissivity to EEPROM, accepting an integer from 5 to 100 corresponding to emissivity from 0.05 to 1.00. 'eeprom_read_check' option, enabled by default, reads the value after writing to EEPROM to confirm. 'eeprom_write_time' defines the erase/write time in ms before and after EEPROM operations, the recommended and default value is 50 ms. With error messages for out of range of emissivity value and erasing/writing to EEPROM. | 
+| set_emissivity(value=100, eeprom_read_check=True, eeprom_write_time=50) | sets the emissivity to EEPROM, accepting an integer from 5 to 100 (default is 100) corresponding to emissivity from 0.05 to 1.00. 'eeprom_read_check' option, enabled by default, reads the value after writing to EEPROM to confirm. 'eeprom_write_time' defines the erase/write time in ms before and after EEPROM operations, the recommended and default value is 50 ms. With error messages for out of range of emissivity value and erasing/writing to EEPROM. | 
 | read_i2c_addres(pec_check=True) | reads the I2C address stored in EEPROM, a 7 bits integer. |
-| set_i2c_addres(addr, eeprom_read_check=False, eeprom_write_time=50) | **(EXPERIMENTAL*)** sets the I2C address stored in EEPROM, a 7 bits integer, in the range of [0x08, 0x77] (8 to 119 in decimal).'eeprom_read_check' option, enabled by default, reads the value after writing to EEPROM to confirm. 'eeprom_write_time' defines the erase/write time in ms before and after EEPROM operations, the recommended and default value is 50 ms. With error messages for using current I2C address <> 0, out of range of EEPROM I2C address value and erasing/writing to EEPROM. |
+| set_i2c_addres(addr=0x5B, eeprom_read_check=False, eeprom_write_time=50) | sets 'addr' (default is 0x5B = 91) as the I2C address stored in EEPROM, a 7 bits integer, in the range of [0x08, 0x77] (8 to 119 in decimal). 'eeprom_read_check' option, disabled by default, reads the value after writing to EEPROM to confirm. 'eeprom_write_time' defines the erase/write time in ms before and after EEPROM operations, the recommended and default value is 50 ms. With error messages for using current I2C address <> 0, out of range of EEPROM I2C address value and erasing/writing to EEPROM. |
 | read16(register, crc_check=True) | reads any MLX90615 register : EEPROM range is 0x10-0x1F, RAM range is 0x25-0x27 (see the [MLX90615 datasheet, sections 8.3.3 and 8.3.4](https://www.melexis.com/en/documents/documentation/datasheets/datasheet-mlx90615)). The 'crc_check' argument option, enabled by default, checks the reading with a CRC-8, with error message when the CRC-8 doesn't match the PEC (Packet Error Code). | 
-| write16(register, data, read_check=True, eeprom_time=50) | writes to any MLX90615 register : EEPROM range is 0x10-0x1F, RAM range is 0x25-0x27 (see the [MLX90615 datasheet, sections 8.3.3 and 8.3.4](https://www.melexis.com/en/documents/documentation/datasheets/datasheet-mlx90615)). The 'read_check' argument option, enabled by default, reads the value after writing to EEPROM to confirm. 'eeprom_time' defines the write time in ms after EEPROM writing, the recommended and default value is 50 ms. With error messages for out of range of emissivity value and erasing/writing to EEPROM. With error message if the reading value after writing doesn't check.
+| write16(register, data, read_check=True, eeprom_time=50) | writes 'data' (16 bit integer number) to any MLX90615 register : EEPROM range is 0x10-0x1F, RAM range is 0x25-0x27 (see the [MLX90615 datasheet, sections 8.3.3 and 8.3.4](https://www.melexis.com/en/documents/documentation/datasheets/datasheet-mlx90615)). The 'read_check' argument option, enabled by default, reads the value after writing to EEPROM to confirm. 'eeprom_time' defines the write time in ms after EEPROM writing, the recommended and default value is 50 ms. With error messages for out of range of emissivity value and erasing/writing to EEPROM. With error message if the reading value after writing doesn't check.
+| sleep() | enable the MLX90615 low power/sleep mode, disabling the sensor functions and saving approx. 1.5 mA. The I2C bus should not be used during the sleep mode. See the [MLX90615 datasheet, section 8.4.8](https://www.melexis.com/en/documents/documentation/datasheets/datasheet-mlx90615) |
+| wake(scl_pin) | disable the MLX90615 low power/sleep mode, powering-up with default mode as defined by the EEPROM. 'scl_pin' is the definition of the I2C SCL pin. See the [MLX90615 datasheet, section 8.4.8](https://www.melexis.com/en/documents/documentation/datasheets/datasheet-mlx90615) |
+| pwm_to_i2c(scl_pin) | switch to I2C mode if PWM is enabled. 'scl_pin' is the definition of the I2C SCL pin. But after power off/on the I2C or PWM mode will be chosen depending on the EEPROM config register. See the [MLX90615 datasheet, section 8.5.1](https://www.melexis.com/en/documents/documentation/datasheets/datasheet-mlx90615) |
+| read_pwm_mode(pec_check=True) | reads the bit 0 of EEPROM config register, returning True if PWM mode is enabled, False if I2C mode is enable. This setting is used on each power on. See the [MLX90615 datasheet, table 7](https://www.melexis.com/en/documents/documentation/datasheets/datasheet-mlx90615) |
+| set_pwm_mode(pwm=False, eeprom_read_check=True, eeprom_write_time=50) | sets 'pwm' (default is False) as communication mode  stored in  bit 0 of EEPROM config register. 'eeprom_read_check' option, enabled by default, reads the value after writing to EEPROM to confirm. 'eeprom_write_time' defines the erase/write time in ms before and after EEPROM operations, the recommended and default value is 50 ms. With error messages for erasing/writing to EEPROM. See the [MLX90615 datasheet, table 7](https://www.melexis.com/en/documents/documentation/datasheets/datasheet-mlx90615) |
 
 ( * ) : **writing to I2C address in EEPROM is risky** because sometimes (3-10%) there is an error while erasing/writing to the EEPROM, rendering the I2C connection to MLX90615 unstable.
 
@@ -170,12 +175,10 @@ Table for driver 'mlx90615.py' v0.2.1 with all features. '[simple]' means driver
 Table for driver 'mlx90615_microbit_no-errors.py' v0.2.1 without error checking. '[simple]' means driver 'mlx90615_simple_no-errors.py'/'mlx90615_microbit_simple_no-errors.py' v0.2.1 with simple read functions and without error checking :
 
 | Microcontroller | Import RAM usage (kB) | Import time (ms) | [Simple] Import RAM usage (kB) | [Simple] Import time (ms) |  Time to read object temp. without PEC (ms) |   
-|:------|:-----:|:-----:|:----:|:----:|:-----:|:----:|
+|:------|:-----:|:-----:|:----:|:----:|:-----:|
 | ESP8266         | - | - | - |  - | - |
 | BBC Micro:bit   | 2.67 | 602 | 1.50 | 240 | 3.3 |
 | ItsyBitsy M0    | - | - | - |  - | - | 
-
-
 
 When not stated, using MicroPython v1.12 and default clock speed for the MicroPython/CircuitPython board.
 
