@@ -2,10 +2,11 @@
 
 [MicroPython](http://micropython.org/) driver for [MLX90615 IR temperature sensor](https://www.melexis.com/en/product/mlx90615/), with features :  
 - reading all the RAM registers, i. e., ambient/object temperature and raw IR data;
-- reading all configurations from EEPROM registers;
-- setting some (emissivity and I2C address) configurations in EEPROM;
+- reading and setting of all configurations in EEPROM registers, including PWM;
 - checking the PEC (Packet Error Code, based on CRC-8) for each reading, as default;
-- use of I2C (SMBus).
+- use of I2C (SMBus);
+- PWM to I2C function;
+- sleep and wake functions.
 
 ### 1) MLX90615
 From Melexis product page :
@@ -143,6 +144,21 @@ irsensor.read_i2c_address()      # Output : 92        # 92 = 0x5C, checked
 ```
 
 ### 4) Benchmarks
+
+| Microcontroller | Import RAM usage (kB) | Import time (ms) |  Import RAM usage, simple) (kB) | Import time (simple) (ms) | Time to read object temperature (ms) | Time to read object temperature without PEC (ms) |   
+|:------|:-----:|:-----:|:----:|:----:|:-----:|:----:|
+| Pyboard v1.1   | - | - | - |  - | - | - |
+| Pyboard Lite   | - | - | - |  - | - | - |
+| Pyboard D SF2W | - | - | - |  - | - | - |
+| Pyboard D SF6W | - | - | - |  - | - | - |
+| BBC Micro:bit  | - | - | 2.0 | 400 |  10 | 3.0 |
+| ESP8266        | - | - | - |  - | - | - |
+| ESP32          | - | - | - |  - | - | - |
+| ESP32 PSRAM    | - | - | - |  - | - | - |
+| ESP32 PSRAM    | - | - | - |  - | - | - |
+| LoPy v1        | - | - | - |  - | - | - |
+| LoPy4          | - | - | - |  - | - | - |
+
 
 ### 5) References
 
