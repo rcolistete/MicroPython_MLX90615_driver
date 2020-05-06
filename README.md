@@ -145,19 +145,20 @@ irsensor.read_i2c_address()      # Output : 92        # 92 = 0x5C, checked
 
 ### 4) Benchmarks
 
-| Microcontroller | Import RAM usage (kB) | Import time (ms) |  Import RAM usage, simple) (kB) | Import time (simple) (ms) | Time to read object temperature (ms) | Time to read object temperature without PEC (ms) |   
+| Microcontroller | Import RAM usage (kB) | Import time (ms) |  (simple version) Import RAM usage (kB) | (simple version) Import time ms | Time to read object temperature (ms) | Time to read object temperature without PEC (ms) |   
 |:------|:-----:|:-----:|:----:|:----:|:-----:|:----:|
-| Pyboard v1.1   | - | - | - |  - | - | - |
-| Pyboard Lite   | - | - | - |  - | - | - |
-| Pyboard D SF2W | - | - | - |  - | - | - |
-| Pyboard D SF6W | - | - | - |  - | - | - |
-| BBC Micro:bit  | - | - | 2.0 | 400 |  10 | 3.0 |
-| ESP8266        | - | - | - |  - | - | - |
-| ESP32          | - | - | - |  - | - | - |
-| ESP32 PSRAM    | - | - | - |  - | - | - |
-| ESP32 PSRAM    | - | - | - |  - | - | - |
-| LoPy v1        | - | - | - |  - | - | - |
-| LoPy4          | - | - | - |  - | - | - |
+| Pyboard v1.1    | - | - | - |  - | - | - |
+| Pyboard Lite    | - | - | - |  - | - | - |
+| Pyboard D SF2W  | - | - | - |  - | - | - |
+| Pyboard D SF6W  | - | - | - |  - | - | - |
+| BBC Micro:bit   | - | - | 2.0 | 400 |  10 | 3.0 |
+| ESP8266         | - | - | - |  - | - | - |
+| ESP32           | - | - | - |  - | - | - |
+| ESP32 PSRAM     | - | - | - |  - | - | - |
+| ESP32 PSRAM     | - | - | - |  - | - | - |
+| LoPy v1 (Pycom) | - | - | - |  - | - | - |
+| LoPy4 (Pycom)   | - | - | - |  - | - | - |
+| Sipeed MAix BiT | - | - | - |  - | - | - | 
 
 
 ### 5) References
