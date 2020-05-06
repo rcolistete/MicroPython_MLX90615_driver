@@ -3,10 +3,10 @@
 [MicroPython](http://micropython.org/) and [CircuitPython](https://circuitpython.org/) driver for 
 [MLX90615 IR temperature sensor](https://www.melexis.com/en/product/mlx90615/), with features :  
 - reading all the RAM registers, i. e., ambient/object temperature and raw IR data;
-- reading and setting of all configurations in EEPROM registers, including PWM;
+- reading and setting of all configurations in EEPROM;
 - checking the PEC (Packet Error Code, based on CRC-8) for each reading, as default;
 - use of I2C (SMBus);
-- PWM to I2C function;
+- enable/disable PWM mode, as well as functions to configure PWM;
 - sleep and wake functions.
 
 ### 1) MLX90615
@@ -20,13 +20,13 @@ From Melexis product page :
 
 > Factory calibrated in wide temperature range: -20 to 85°C for sensor temperature and -40 to 115°C for object temperature.
 
-, e. g., human skin (0.95 <= e <= 0.98)
-
 ### 2) MicroPython driver definitions
 
-These MicroPython driver for MLX90615 is optimised for low memory usage :  
-- by using and returning integer values as possible, as float values allocate more RAM;
+These MicroPython drivers for MLX90615 are optimised for low memory usage :  
+- by using and returning integer values as possible, as float values would allocate more RAM;
 - documentation is outside the code;
+- the 'no-errors' version has no error checking for reading the sensor, nor error messages;
+- the 'simple' version has just the most important functions.
 
 | Constants | Description |
 | -------- | ----------- |
@@ -146,22 +146,38 @@ irsensor.read_i2c_address()      # Output : 92        # 92 = 0x5C, checked
 
 ### 4) Benchmarks
 
-| Microcontroller | Import RAM usage (kB) | Import time (ms) | [Simple] Import RAM usage (kB) | [Simple]  Import time (ms) | Time to read object temp (ms) | Time to read object temp without PEC (ms) |   
+Table for driver 'mlx90615.py' v0.2.1 with all features. '[simple]' means driver 'mlx90615_simple.py'/'mlx90615_microbit_simple.py' v0.2.1 with simple read functions :
+
+| Microcontroller | Import RAM usage (kB) | Import time (ms) | [Simple] Import RAM usage (kB) | [Simple] Import time (ms) | Time to read object temp. (ms) | Time to read object temp. without PEC (ms) |   
 |:------|:-----:|:-----:|:----:|:----:|:-----:|:----:|
 | Pyboard v1.1    | - | - | - |  - | - | - |
 | Pyboard Lite    | - | - | - |  - | - | - |
 | Pyboard D SF2W  | - | - | - |  - | - | - |
 | Pyboard D SF6W  | - | - | - |  - | - | - |
-| BBC Micro:bit   | - | - | 2.0 | 400 |  10 | 3.0 |
 | ESP8266         | - | - | - |  - | - | - |
 | ESP32           | - | - | - |  - | - | - |
 | ESP32 PSRAM     | - | - | - |  - | - | - |
-| ESP32 PSRAM     | - | - | - |  - | - | - |
-| LoPy v1 (Pycom) | - | - | - |  - | - | - |
-| LoPy4 (Pycom)   | - | - | - |  - | - | - |
+| BBC Micro:bit   | - | - | 2.0 | 400 |  9.5 | 3.3 |
+| LoPy v1         | - | - | - |  - | - | - |
+| LoPy4           | - | - | - |  - | - | - |
+| OpenMV M7       | - | - | - |  - | - | - |
+| OpenMV H7       | - | - | - |  - | - | - |
 | Sipeed MAix BiT | - | - | - |  - | - | - |
-| Adafruit CLUE   | - | - | - |  - | - | - |
+| ItsyBitsy M0    | - | - | - |  - | - | - | 
 | ItsyBitsy M4    | - | - | - |  - | - | - | 
+| Adafruit CLUE   | - | - | - |  - | - | - |
+
+Table for driver 'mlx90615_microbit_no-errors.py' v0.2.1 without error checking. '[simple]' means driver 'mlx90615_simple_no-errors.py'/'mlx90615_microbit_simple_no-errors.py' v0.2.1 with simple read functions and without error checking :
+
+| Microcontroller | Import RAM usage (kB) | Import time (ms) | [Simple] Import RAM usage (kB) | [Simple] Import time (ms) |  Time to read object temp. without PEC (ms) |   
+|:------|:-----:|:-----:|:----:|:----:|:-----:|:----:|
+| ESP8266         | - | - | - |  - | - |
+| BBC Micro:bit   | 2.67 | 602 | 1.50 | 240 | 3.3 |
+| ItsyBitsy M0    | - | - | - |  - | - | 
+
+
+
+When not stated, using MicroPython v1.12 and default clock speed for the MicroPython/CircuitPython board.
 
 ### 5) References
 
