@@ -1,6 +1,7 @@
-# MicroPython MLX90615 driver module
+# MicroPython (and CircuitPython) MLX90615 driver module
 
-[MicroPython](http://micropython.org/) driver for [MLX90615 IR temperature sensor](https://www.melexis.com/en/product/mlx90615/), with features :  
+[MicroPython](http://micropython.org/) and [CircuitPython](https://circuitpython.org/) driver for 
+[MLX90615 IR temperature sensor](https://www.melexis.com/en/product/mlx90615/), with features :  
 - reading all the RAM registers, i. e., ambient/object temperature and raw IR data;
 - reading and setting of all configurations in EEPROM registers, including PWM;
 - checking the PEC (Packet Error Code, based on CRC-8) for each reading, as default;
@@ -145,7 +146,7 @@ irsensor.read_i2c_address()      # Output : 92        # 92 = 0x5C, checked
 
 ### 4) Benchmarks
 
-| Microcontroller | Import RAM usage (kB) | Import time (ms) |  (simple version) Import RAM usage (kB) | (simple version) Import time ms | Time to read object temperature (ms) | Time to read object temperature without PEC (ms) |   
+| Microcontroller | Import RAM usage (kB) | Import time (ms) | [Simple] Import RAM usage (kB) | [Simple]  Import time (ms) | Time to read object temp (ms) | Time to read object temp without PEC (ms) |   
 |:------|:-----:|:-----:|:----:|:----:|:-----:|:----:|
 | Pyboard v1.1    | - | - | - |  - | - | - |
 | Pyboard Lite    | - | - | - |  - | - | - |
@@ -158,8 +159,9 @@ irsensor.read_i2c_address()      # Output : 92        # 92 = 0x5C, checked
 | ESP32 PSRAM     | - | - | - |  - | - | - |
 | LoPy v1 (Pycom) | - | - | - |  - | - | - |
 | LoPy4 (Pycom)   | - | - | - |  - | - | - |
-| Sipeed MAix BiT | - | - | - |  - | - | - | 
-
+| Sipeed MAix BiT | - | - | - |  - | - | - |
+| Adafruit CLUE   | - | - | - |  - | - | - |
+| ItsyBitsy M4    | - | - | - |  - | - | - | 
 
 ### 5) References
 
