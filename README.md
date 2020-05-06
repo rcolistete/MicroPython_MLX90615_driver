@@ -1,7 +1,7 @@
 # MicroPython (and CircuitPython) MLX90615 driver module
 
 [MicroPython](http://micropython.org/) and [CircuitPython](https://circuitpython.org/) drivers for 
-[MLX90615 IR temperature sensor](https://www.melexis.com/en/product/mlx90615/), with features :  
+[MLX90615 infrared temperature sensor](https://www.melexis.com/en/product/mlx90615/), with features :  
 - reading all the RAM registers, i. e., ambient/object temperature and raw IR data;
 - reading and setting of all configurations in EEPROM;
 - checking the PEC (Packet Error Code, based on CRC-8) for each reading, as default;
@@ -18,7 +18,7 @@ These drivers for MLX90615 are optimised for low memory usage :
 
 ### 1) MLX90615
 
-The Melexis MLX90615 :  
+The [Melexis MLX90615 infrared thermometer](https://www.melexis.com/en/product/mlx90615/) :  
 - is a miniature infrared thermometer for non-contact temperature measurements;
 - has small size and good accuracy, so it is especially suited for medical applications like ear or forehead thermometers;
 - has I2C (SMBus) and PWM communication options;
@@ -207,15 +207,17 @@ When not stated, using MicroPython v1.12 and default clock speed for the MicroPy
 
 ### 5) References
 
-Documentation :
-1. official [Melexis MLX90615 web page](https://www.melexis.com/en/product/mlx90615/);
+MLX90615 documentation :
+1. [official Melexis MLX90615 web page](https://www.melexis.com/en/product/mlx90615/), with datasheet, application notes, etc;
 2. [Melexis Comparative Table of InfraRed Thermometer Family - MLX90614 and MLX90615](https://www.melexis.com/-/media/files/documents/product-flyers/quick-reference-infrared-temperature-sensors.pdf);
-3. [Comparative table between the MLX90614 and the MLX90615](http://dtsheet.com/doc/1776025/comparative-table-between-the-mlx90614-and-the-mlx90615-d...);
+3. [Comparative table between the MLX90614 and the MLX90615](http://dtsheet.com/doc/1776025/comparative-table-between-the-mlx90614-and-the-mlx90615-d...).
+
+MLX90615 tutorials :  
+- [Grove - MLX90615 Digital Infrared Temperature Sensor - SeedStudio Wiki](https://wiki.seeedstudio.com/Grove-Digital_Infrared_Temperature_Sensor/), for Arduino;
+- [MLX90615 infrared thermometer and Arduino - Arduino Learning](http://arduinolearning.com/code/mlx90615-infrared-thermometer-and-arduino.php).
 
 Other MLX90615 drivers :
 1. ['Arduino library for MLX90615 module from Seeed-Studio'](https://github.com/Seeed-Studio/Digital_Infrared_Temperature_Sensor_MLX90615) has some features like optional SoftI2cMaster library, PEC/CRC-8 checking and writing to EEPROM registers;
 2. ['mlx90615-on-raspberryPi from paulvha'](https://github.com/paulvha/mlx90615-on-raspberryPi) is a C driver and interactive software for Raspberry Pi, with many features and excelent documentation complementing the official MLX96015 documentation, like citation of the time delay needed after erasing/writing to the MLX90615 EEPROM;
 3. ['A minimal Arduino library for Melexis MLX90615' from skiselev](https://github.com/skiselev/MLX90615) has only some reading functions;
 4. [MLX90615 library functions from Melexis](https://github.com/melexis/mlx90615-library) is a reference C++ driver with many features and good documentation;
-
-
