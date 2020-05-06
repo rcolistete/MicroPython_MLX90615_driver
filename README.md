@@ -10,6 +10,12 @@
 - sleep and wake functions;
 - optional simplified versions with low memory usage.
 
+These drivers for MLX90615 are optimised for low memory usage :  
+- by using and returning integer values as possible, as float values would allocate more RAM;
+- documentation is outside the code;
+- the 'no-errors' version has no error checking for reading the sensor, nor error messages;
+- the 'simple' version has just the most important functions.
+
 ### 1) MLX90615
 From Melexis product page :
 
@@ -20,14 +26,17 @@ From Melexis product page :
 >  The infrared thermometer comes factory calibrated with a digital SMBus output giving full access to the measured temperature in the complete temperature range(s) with a resolution of 0.02 °C. The sensor achieves an accuracy of ±0.2°C within the relevant medical temperature range. The user can choose to configure the digital output to be PWM.
 
 > Factory calibrated in wide temperature range: -20 to 85°C for sensor temperature and -40 to 115°C for object temperature.
+checking the PEC (Packet Error Code, based on CRC-8) for each reading
 
 ### 2) MicroPython/CircuitPython driver definitions
 
-These MicroPython/CircuitPython drivers for MLX90615 are optimised for low memory usage :  
-- by using and returning integer values as possible, as float values would allocate more RAM;
-- documentation is outside the code;
-- the 'no-errors' version has no error checking for reading the sensor, nor error messages;
-- the 'simple' version has just the most important functions.
+The 'no-errors' version of the driver doesn't check the PEC (Packet Error Code, based on CRC-8) on each reading, doesn't read the value after writing to EEPROM to confirm, nor have specific error messages. Advantages : lower RAM usage, faster to import and a little bit to run the functions. Disadvantages : less robust, more difficult to debug errors.
+
+The 'simple' version of the driver has just the most important functions : read ambient and object temperatures, read unique ID, read EEPROM and read of any register. Advantages : robust, lower RAM usage. Disadvantages : not possible to change MLX90615 configuration, less features.
+
+The BBC Micro:bit version, even not the 'simple' one, is limited to fewer functions due to RAM limitations, so there are no sleep/wake, PWM and IIR filter functions.
+
+The full version of the driver is described in the tables below.
 
 | Constants | Description |
 | -------- | ----------- |
@@ -63,9 +72,9 @@ When the function has the argument option :
 | read_pwm_object_temp(pec_check=True) | reads the bit 2 of EEPROM config register, returning True if PWM output is for object temperature (default), False if it is for ambient temperature. See the [MLX90615 datasheet, table 7](https://www.melexis.com/en/documents/documentation/datasheets/datasheet-mlx90615). |
 | set_pwm_object_temp(object_temp=True, eeprom_read_check=True, eeprom_write_time=50) | sets 'object_temp' (default is True) in bit 2 of EEPROM config register, True for PWM output of object temperature, False for PWM output of ambient temperature. With error messages for erasing/writing to EEPROM. This setting is used after power on in PWM mode. See the [MLX90615 datasheet, table 7](https://www.melexis.com/en/documents/documentation/datasheets/datasheet-mlx90615). |
 | read_pwm_tmin(pec_check=True) | reads the minimum temperature when PWM is used, the output scale is 0.02 K/LSB, so to convert to degrees Celsius the equation is: Tmin(C) = output × 0.02 − 273.15. Factory default is 0x355B corresponding to +0.03°C. See the [MLX90615 datasheet, sections 8.3.3, 8.3.4 and 8.6](https://www.melexis.com/en/documents/documentation/datasheets/datasheet-mlx90615). |
-| set_pwm_tmin(tmin=0x355B, eeprom_read_check=True, eeprom_write_time=50) | sets 'tmin' (default is 0x355B corresponding to +0.03°C) as the minimum temperature when PWM is used. The scale is 0.02 K/LSB, so to convert to degrees Celsius the equation is: Tmin(C) = tmin × 0.02 − 273.15. With error messages for erasing/writing to EEPROM. This setting is used after power on in PWM mode. See the [MLX90615 datasheet, sections 8.3.3, 8.3.4 and 8.6](https://www.melexis.com/en/documents/documentation/datasheets/datasheet-mlx90615). |
+| set_pwm_tmin(tmin=0x355B, eeprom_read_check=True, eeprom_write_time=50) | sets 'tmin' (default is 0x355B corresponding to +0.03°C) as the minimum temperature when PWM is used. The scale is 0.02 K/LSB, so to convert to degrees Celsius the equation is: Tmin(C) = tmin × 0.02 − 273.15. With error messages for erasing/writing to EEPROM. This setting is used after power on in PWM mode. Beware that it changes the I2C address stored in EEPROM. See the [MLX90615 datasheet, sections 8.3.3, 8.3.4 and 8.6](https://www.melexis.com/en/documents/documentation/datasheets/datasheet-mlx90615). |
 | read_pwm_trange(pec_check=True) | reads the range for the temperature (Trange = Tmax – Tmin) when PWM is used, the output scale is 0.02 K/LSB, so to convert to degrees Celsius the equation is: Trange(C) = output × 0.02 − 273.15. Factory default is 0x09C4 corresponding to +49.98°C. See the [MLX90615 datasheet, sections 8.3.3, 8.3.4 and 8.6](https://www.melexis.com/en/documents/documentation/datasheets/datasheet-mlx90615). |
-| set_pwm_trange(trange=0x09C3, eeprom_read_check=True, eeprom_write_time=50) | sets 'trange' (default is 0x09C3 corresponding to +49.98°C) as the range for the temperature (Trange = Tmax – Tmin) when PWM is used. The scale is 0.02 K/LSB, so to convert to degrees Celsius the equation is: Trange(C) = output × 0.02 − 273.15. With error messages for erasing/writing to EEPROM. This setting is used after power on in PWM mode. See the [MLX90615 datasheet, sections 8.3.3, 8.3.4 and 8.6](https://www.melexis.com/en/documents/documentation/datasheets/datasheet-mlx90615). |
+| set_pwm_trange(trange=0x09C3, eeprom_read_check=True, eeprom_write_time=50) | sets 'trange' (default is 0x09C3 corresponding to +49.98°C) as the range for the temperature (Trange = Tmax – Tmin) when PWM is used. The scale is 0.02 K/LSB, so to convert to degrees Celsius the equation is: Trange(C) = trange × 0.02 − 273.15. With error messages for erasing/writing to EEPROM. This setting is used after power on in PWM mode. See the [MLX90615 datasheet, sections 8.3.3, 8.3.4 and 8.6](https://www.melexis.com/en/documents/documentation/datasheets/datasheet-mlx90615). |
 | read16(register, crc_check=True) | reads any MLX90615 register : EEPROM range is 0x10-0x1F, RAM range is 0x25-0x27 (see the [MLX90615 datasheet, sections 8.3.3 and 8.3.4](https://www.melexis.com/en/documents/documentation/datasheets/datasheet-mlx90615)). The 'crc_check' argument option, enabled by default, checks the reading with a CRC-8, with error message when the CRC-8 doesn't match the PEC (Packet Error Code). | 
 | write16(register, data, read_check=True, eeprom_time=50) | writes 'data' (16 bit integer number) to any MLX90615 register : EEPROM range is 0x10-0x1F, RAM range is 0x25-0x27 (see the [MLX90615 datasheet, sections 8.3.3 and 8.3.4](https://www.melexis.com/en/documents/documentation/datasheets/datasheet-mlx90615)). The 'read_check' argument option, enabled by default, reads the value after writing to EEPROM to confirm. 'eeprom_time' defines the write time in ms after EEPROM writing, the recommended and default value is 50 ms. With error messages for out of range of emissivity value and erasing/writing to EEPROM. With error message if the reading value after writing doesn't check. | 
 
