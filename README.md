@@ -1,13 +1,14 @@
 # MicroPython (and CircuitPython) MLX90615 driver module
 
-[MicroPython](http://micropython.org/) and [CircuitPython](https://circuitpython.org/) driver for 
+[MicroPython](http://micropython.org/) and [CircuitPython](https://circuitpython.org/) drivers for 
 [MLX90615 IR temperature sensor](https://www.melexis.com/en/product/mlx90615/), with features :  
 - reading all the RAM registers, i. e., ambient/object temperature and raw IR data;
 - reading and setting of all configurations in EEPROM;
 - checking the PEC (Packet Error Code, based on CRC-8) for each reading, as default;
 - use of I2C (SMBus);
 - enable/disable and configuration of PWM mode;
-- sleep and wake functions.
+- sleep and wake functions;
+- optional simplified versions with low memory usage.
 
 ### 1) MLX90615
 From Melexis product page :
@@ -38,7 +39,7 @@ All the functions can return error messagens using exceptions, so it is recommen
 When the function has the argument option :  
 - 'pec_check' (packet error code check), it is enabled by default and it checks the reading with a CRC-8, with error message for reading error;
 - 'eeprom_read_check', if True it reads the value after writing to EEPROM to confirm;
-- 'eeprom_write_time' defines the erase/write time in ms before and after EEPROM operations, the recommended and default value is 50 ms. 
+- 'eeprom_write_time', it defines the erase/write time in ms before and after EEPROM operations, the recommended and default value is 50 ms. 
 
 | Function | Description |
 | -------- | ----------- |
@@ -52,17 +53,22 @@ When the function has the argument option :
 | set_emissivity(value=100, eeprom_read_check=True, eeprom_write_time=50) | sets the emissivity to EEPROM, accepting an integer from 5 to 100 (default is 100) corresponding to emissivity from 0.05 to 1.00. With error messages for out of range of emissivity value and erasing/writing to EEPROM. | 
 | read_i2c_addres(pec_check=True) | reads the I2C address stored in EEPROM, a 7 bits integer. |
 | set_i2c_addres(addr=0x5B, eeprom_read_check=False, eeprom_write_time=50) | sets 'addr' (default is 0x5B = 91) as the I2C address stored in EEPROM, a 7 bits integer, in the range of [0x08, 0x77] (8 to 119 in decimal). With error messages for using current I2C address <> 0, out of range of EEPROM I2C address value and erasing/writing to EEPROM. |
-| read16(register, crc_check=True) | reads any MLX90615 register : EEPROM range is 0x10-0x1F, RAM range is 0x25-0x27 (see the [MLX90615 datasheet, sections 8.3.3 and 8.3.4](https://www.melexis.com/en/documents/documentation/datasheets/datasheet-mlx90615)). The 'crc_check' argument option, enabled by default, checks the reading with a CRC-8, with error message when the CRC-8 doesn't match the PEC (Packet Error Code). | 
-| write16(register, data, read_check=True, eeprom_time=50) | writes 'data' (16 bit integer number) to any MLX90615 register : EEPROM range is 0x10-0x1F, RAM range is 0x25-0x27 (see the [MLX90615 datasheet, sections 8.3.3 and 8.3.4](https://www.melexis.com/en/documents/documentation/datasheets/datasheet-mlx90615)). The 'read_check' argument option, enabled by default, reads the value after writing to EEPROM to confirm. 'eeprom_time' defines the write time in ms after EEPROM writing, the recommended and default value is 50 ms. With error messages for out of range of emissivity value and erasing/writing to EEPROM. With error message if the reading value after writing doesn't check.
 | sleep() | enable the MLX90615 low power/sleep mode, disabling the sensor functions and saving approx. 1.5 mA. The I2C bus should not be used during the sleep mode. See the [MLX90615 datasheet, section 8.4.8](https://www.melexis.com/en/documents/documentation/datasheets/datasheet-mlx90615). |
 | wake(scl_pin) | disable the MLX90615 low power/sleep mode, powering-up with default mode as defined by the EEPROM. 'scl_pin' is the definition of the I2C SCL pin. See the [MLX90615 datasheet, section 8.4.8](https://www.melexis.com/en/documents/documentation/datasheets/datasheet-mlx90615). |
 | pwm_to_i2c(scl_pin) | switch to I2C mode if PWM is enabled. 'scl_pin' is the definition of the I2C SCL pin. But after power off/on the I2C or PWM mode will be chosen depending on the bit 0 of EEPROM config register. See the [MLX90615 datasheet, section 8.5.1](https://www.melexis.com/en/documents/documentation/datasheets/datasheet-mlx90615). |
+
 | read_pwm_mode(pec_check=True) | reads the bit 0 of EEPROM config register, returning True if PWM mode is enabled, False if I2C mode is enabled (default). See the [MLX90615 datasheet, table 7](https://www.melexis.com/en/documents/documentation/datasheets/datasheet-mlx90615). |
 | set_pwm_mode(pwm=False, eeprom_read_check=True, eeprom_write_time=50) | sets 'pwm' (default is False) as communication mode  stored in bit 0 of EEPROM config register, True for PWM mode enabled, False for I2C mode enabled (default). With error messages for erasing/writing to EEPROM. This setting is used after power on. See the [MLX90615 datasheet, table 7](https://www.melexis.com/en/documents/documentation/datasheets/datasheet-mlx90615). |
 | read_pwm_fast(pec_check=True) | reads the bit 1 of EEPROM config register, returning True if PWM fast frequency (10 kHz)  is enabled, False if PWM slow frequency (1 kHz) is enabled (default). See the [MLX90615 datasheet, table 7](https://www.melexis.com/en/documents/documentation/datasheets/datasheet-mlx90615). |
 | set_pwm_fast(pwm_fast=False, eeprom_read_check=True, eeprom_write_time=50) | sets 'pwm_fast' (default is False) in bit 1 of EEPROM config register, True for PWM fast frequency (10 kHz) stored, False for PWM slow frequency (1 kHz). With error messages for erasing/writing to EEPROM. This setting is used after power on in PWM mode. See the [MLX90615 datasheet, table 7](https://www.melexis.com/en/documents/documentation/datasheets/datasheet-mlx90615). |
 | read_pwm_object_temp(pec_check=True) | reads the bit 2 of EEPROM config register, returning True if PWM output is for object temperature (default), False if it is for ambient temperature. See the [MLX90615 datasheet, table 7](https://www.melexis.com/en/documents/documentation/datasheets/datasheet-mlx90615). |
 | set_pwm_object_temp(object_temp=True, eeprom_read_check=True, eeprom_write_time=50) | sets 'object_temp' (default is True) in bit 2 of EEPROM config register, True for PWM output of object temperature, False for PWM output of ambient temperature. With error messages for erasing/writing to EEPROM. This setting is used after power on in PWM mode. See the [MLX90615 datasheet, table 7](https://www.melexis.com/en/documents/documentation/datasheets/datasheet-mlx90615). |
+| read_pwm_tmin(pec_check=True) | reads the minimum temperature when PWM is used, the output scale is 0.02 K/LSB, so to convert to degrees Celsius the equation is: Tmin(C) = output × 0.02 − 273.15. Factory default is 0x355B corresponding to +0.03°C. See the [MLX90615 datasheet, sections 8.3.3, 8.3.4 and 8.6](https://www.melexis.com/en/documents/documentation/datasheets/datasheet-mlx90615). |
+| set_pwm_tmin(tmin=0x355B, eeprom_read_check=True, eeprom_write_time=50) | sets 'tmin' (default is 0x355B corresponding to +0.03°C) as the minimum temperature when PWM is used. The scale is 0.02 K/LSB, so to convert to degrees Celsius the equation is: Tmin(C) = tmin × 0.02 − 273.15. With error messages for erasing/writing to EEPROM. This setting is used after power on in PWM mode. See the [MLX90615 datasheet, sections 8.3.3, 8.3.4 and 8.6](https://www.melexis.com/en/documents/documentation/datasheets/datasheet-mlx90615). |
+| read_pwm_trange(pec_check=True) | reads the range for the temperature (Trange = Tmax – Tmin) when PWM is used, the output scale is 0.02 K/LSB, so to convert to degrees Celsius the equation is: Trange(C) = output × 0.02 − 273.15. Factory default is 0x09C4 corresponding to +49.98°C. See the [MLX90615 datasheet, sections 8.3.3, 8.3.4 and 8.6](https://www.melexis.com/en/documents/documentation/datasheets/datasheet-mlx90615). |
+| set_pwm_trange(trange=0x09C3, eeprom_read_check=True, eeprom_write_time=50) | sets 'trange' (default is 0x09C3 corresponding to +49.98°C) as the range for the temperature (Trange = Tmax – Tmin) when PWM is used. The scale is 0.02 K/LSB, so to convert to degrees Celsius the equation is: Trange(C) = output × 0.02 − 273.15. With error messages for erasing/writing to EEPROM. This setting is used after power on in PWM mode. See the [MLX90615 datasheet, sections 8.3.3, 8.3.4 and 8.6](https://www.melexis.com/en/documents/documentation/datasheets/datasheet-mlx90615). |
+| read16(register, crc_check=True) | reads any MLX90615 register : EEPROM range is 0x10-0x1F, RAM range is 0x25-0x27 (see the [MLX90615 datasheet, sections 8.3.3 and 8.3.4](https://www.melexis.com/en/documents/documentation/datasheets/datasheet-mlx90615)). The 'crc_check' argument option, enabled by default, checks the reading with a CRC-8, with error message when the CRC-8 doesn't match the PEC (Packet Error Code). | 
+| write16(register, data, read_check=True, eeprom_time=50) | writes 'data' (16 bit integer number) to any MLX90615 register : EEPROM range is 0x10-0x1F, RAM range is 0x25-0x27 (see the [MLX90615 datasheet, sections 8.3.3 and 8.3.4](https://www.melexis.com/en/documents/documentation/datasheets/datasheet-mlx90615)). The 'read_check' argument option, enabled by default, reads the value after writing to EEPROM to confirm. 'eeprom_time' defines the write time in ms after EEPROM writing, the recommended and default value is 50 ms. With error messages for out of range of emissivity value and erasing/writing to EEPROM. With error message if the reading value after writing doesn't check. | 
 
 ( * ) : **writing to I2C address in EEPROM is risky** because sometimes (3-10%) there is an error while erasing/writing to the EEPROM, rendering the I2C connection to MLX90615 unstable.
 
