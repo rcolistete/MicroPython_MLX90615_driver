@@ -17,16 +17,16 @@ These drivers for MLX90615 are optimised for low memory usage :
 - the 'simple' version has just the most important functions.
 
 ### 1) MLX90615
-From Melexis product page :
 
->  The MLX90615 is a miniature infrared thermometer for non-contact temperature measurements.
-
->  With its small size, this infrared thermometer is especially suited for medical applications like ear or forehead thermometers or other applications where "small things make a big difference".
-
->  The infrared thermometer comes factory calibrated with a digital SMBus output giving full access to the measured temperature in the complete temperature range(s) with a resolution of 0.02 °C. The sensor achieves an accuracy of ±0.2°C within the relevant medical temperature range. The user can choose to configure the digital output to be PWM.
-
-> Factory calibrated in wide temperature range: -20 to 85°C for sensor temperature and -40 to 115°C for object temperature.
-checking the PEC (Packet Error Code, based on CRC-8) for each reading
+The Melexis MLX90615 :  
+- is a miniature infrared thermometer for non-contact temperature measurements;
+- has small size and good accuracy, so it is especially suited for medical applications like ear or forehead thermometers;
+- has I2C (SMBus) and PWM communication options;
+- features PEC (Packet Error Code, based on CRC-8) for each data/EEPROM reading;
+- usually consumes 1.5 mA in active mode using I2C, or 3 uA in low power/sleep mode;
+- comes factory calibrated in wide temperature range, -20 to 85°C for ambient/sensor temperature and -40 to 115°C for object temperature, with a resolution of 0.02 °C;
+- has factory calibrated accuracy of ±0.2°C for object temperature range 36-39°C and ambient/sensor temperature range 16-40°C, and ±0.3°C for object temperature range 32-42°C;
+- updates the temperature and raw IR data in RAM at a 2 Hz rate (0.5 s period).
 
 ### 2) MicroPython/CircuitPython driver definitions
 
@@ -57,12 +57,12 @@ When the function has the argument option :
 | read_object_temp(pec_check=True) | reads the object temperature in the range [-40, 115] C, returning a integer 100x the Celsius degrees, so 3647 = 36.47 C. There is also error message for invalid value. |
 | read_raw_ir_data(pec_check=True) | reads the raw IR data, returning a 16 bits integer. |
 | read_id(pec_check=True) | reads the unique sensor ID, a 32 bits integer stored in EEPROM. |
-| read_eeprom(pec_check=True) | reads the EEPROM returning a list of 16 values, each one a 16 bits integer. Very useful to save a backup of the EEPROM, including the factory calibration data. |
+| read_eeprom(pec_check=True) | reads the EEPROM returning a list of 16 values, each one a 16 bits integer. Very useful to save a backup of the EEPROM, including the factory calibration data. See the [MLX90615 datasheet, section 8.3.3 and table 6](https://www.melexis.com/en/documents/documentation/datasheets/datasheet-mlx90615).|
 | read_emissivity(pec_check=True) | reads the emissivity stored in EEPROM, an integer from 5 to 100 corresponding to emissivity from 0.05 to 1.00. |
 | set_emissivity(value=100, eeprom_read_check=True, eeprom_write_time=50) | sets the emissivity to EEPROM, accepting an integer from 5 to 100 (default is 100) corresponding to emissivity from 0.05 to 1.00. With error messages for out of range of emissivity value and erasing/writing to EEPROM. | 
 | read_i2c_addres(pec_check=True) | reads the I2C address stored in EEPROM, a 7 bits integer. |
 | set_i2c_address(addr=0x5B, eeprom_read_check=False, eeprom_write_time=50) | sets 'addr' (default is 0x5B = 91) as the I2C address stored in EEPROM, a 7 bits integer, in the range of [0x08, 0x77] (8 to 119 in decimal). With error messages for using current I2C address <> 0, out of range of EEPROM I2C address value and erasing/writing to EEPROM. |
-| read_iir_filter(pec_check=True) | reads the bits 12, 13 and 14 of EEPROM config register, returning a number from 0 to 7 (default is 1) corresponding to configurations of IIR (Infinite Impulse Response) digital filter. The IIR filter allows customization of the thermometer output in order to trade-off noise versus settling time, but the refresh rate of 2 Hz (0.5 s) of the data in the RAM remain constant. See the [MLX90615 datasheet, section 8.2 and table 7](https://www.melexis.com/en/documents/documentation/datasheets/datasheet-mlx90615). |
+| read_iir_filter(pec_check=True) | reads the bits 12, 13 and 14 of EEPROM config register, returning a number from 1 to 7 (default is 1) corresponding to configurations of IIR (Infinite Impulse Response) digital filter. The IIR filter allows customization of the thermometer output in order to trade-off noise versus settling time, but the refresh rate of 2 Hz (0.5 s) of the data in the RAM remain constant. See the [MLX90615 datasheet, section 8.2 and table 7](https://www.melexis.com/en/documents/documentation/datasheets/datasheet-mlx90615). |
 | set_iir_filter(iir=1, eeprom_read_check=True, eeprom_write_time=50) | sets 'iir' value (1 to 7, default is 1) in bits 12, 13 and 14 of EEPROM config register corresponding to configurations of IIR (Infinite Impulse Response) digital filter. The IIR filter allows customization of the thermometer output in order to trade-off noise versus settling time, but the refresh rate of 2 Hz (0.5 s) of the data in the RAM remain constant. With error messages for erasing/writing to EEPROM. See the [MLX90615 datasheet, section 8.2 and table 7](https://www.melexis.com/en/documents/documentation/datasheets/datasheet-mlx90615). |
 | sleep() | enable the MLX90615 low power/sleep mode, disabling the sensor functions and saving approx. 1.5 mA. The I2C bus should not be used during the sleep mode. See the [MLX90615 datasheet, section 8.4.8](https://www.melexis.com/en/documents/documentation/datasheets/datasheet-mlx90615). |
 | wake(scl_pin) | disable the MLX90615 low power/sleep mode, powering-up with default mode as defined by the EEPROM. 'scl_pin' is the definition of the I2C SCL pin. See the [MLX90615 datasheet, section 8.4.8](https://www.melexis.com/en/documents/documentation/datasheets/datasheet-mlx90615). |
@@ -74,7 +74,7 @@ When the function has the argument option :
 | read_pwm_object_temp(pec_check=True) | reads the bit 2 of EEPROM config register, returning True if PWM output is for object temperature (default), False if it is for ambient temperature. See the [MLX90615 datasheet, table 7](https://www.melexis.com/en/documents/documentation/datasheets/datasheet-mlx90615). |
 | set_pwm_object_temp(object_temp=True, eeprom_read_check=True, eeprom_write_time=50) | sets 'object_temp' (default is True) in bit 2 of EEPROM config register, True for PWM output of object temperature, False for PWM output of ambient temperature. With error messages for erasing/writing to EEPROM. This setting is used after power on in PWM mode. See the [MLX90615 datasheet, table 7](https://www.melexis.com/en/documents/documentation/datasheets/datasheet-mlx90615). |
 | read_pwm_tmin(pec_check=True) | reads the minimum temperature when PWM is used, the output scale is 0.02 K/LSB, so to convert to degrees Celsius the equation is: Tmin(C) = output × 0.02 − 273.15. Factory default is 0x355B corresponding to +0.03°C. See the [MLX90615 datasheet, sections 8.3.3, 8.3.4 and 8.6](https://www.melexis.com/en/documents/documentation/datasheets/datasheet-mlx90615). |
-| set_pwm_tmin(tmin=0x355B, eeprom_read_check=True, eeprom_write_time=50) | sets 'tmin' (default is 0x355B corresponding to +0.03°C) as the minimum temperature when PWM is used. The scale is 0.02 K/LSB, so to convert to degrees Celsius the equation is: Tmin(C) = tmin × 0.02 − 273.15. With error messages for erasing/writing to EEPROM. This setting is used after power on in PWM mode. Beware that it changes the I2C address stored in EEPROM. See the [MLX90615 datasheet, sections 8.3.3, 8.3.4 and 8.6](https://www.melexis.com/en/documents/documentation/datasheets/datasheet-mlx90615). |
+| set_pwm_tmin(tmin=0x355B, eeprom_read_check=True, eeprom_write_time=50) | sets 'tmin' (default is 0x355B corresponding to +0.03°C) as the minimum temperature when PWM is used. The scale is 0.02 K/LSB, so to convert to degrees Celsius the equation is: Tmin(C) = tmin × 0.02 − 273.15. With error messages for erasing/writing to EEPROM. This setting is used after power on in PWM mode. Beware that the 7 less significant bits of 'tmin' composes the I2C address stored in EEPROM. See the [MLX90615 datasheet, sections 8.3.3, 8.3.4 and 8.6](https://www.melexis.com/en/documents/documentation/datasheets/datasheet-mlx90615). |
 | read_pwm_trange(pec_check=True) | reads the range for the temperature (Trange = Tmax – Tmin) when PWM is used, the output scale is 0.02 K/LSB, so to convert to degrees Celsius the equation is: Trange(C) = output × 0.02 − 273.15. Factory default is 0x09C4 corresponding to +49.98°C. See the [MLX90615 datasheet, sections 8.3.3, 8.3.4 and 8.6](https://www.melexis.com/en/documents/documentation/datasheets/datasheet-mlx90615). |
 | set_pwm_trange(trange=0x09C3, eeprom_read_check=True, eeprom_write_time=50) | sets 'trange' (default is 0x09C3 corresponding to +49.98°C) as the range for the temperature (Trange = Tmax – Tmin) when PWM is used. The scale is 0.02 K/LSB, so to convert to degrees Celsius the equation is: Trange(C) = trange × 0.02 − 273.15. With error messages for erasing/writing to EEPROM. This setting is used after power on in PWM mode. See the [MLX90615 datasheet, sections 8.3.3, 8.3.4 and 8.6](https://www.melexis.com/en/documents/documentation/datasheets/datasheet-mlx90615). |
 | read16(register, crc_check=True) | reads any MLX90615 register : EEPROM range is 0x10-0x1F, RAM range is 0x25-0x27 (see the [MLX90615 datasheet, sections 8.3.3 and 8.3.4](https://www.melexis.com/en/documents/documentation/datasheets/datasheet-mlx90615)). The 'crc_check' argument option, enabled by default, checks the reading with a CRC-8, with error message when the CRC-8 doesn't match the PEC (Packet Error Code). | 
@@ -206,6 +206,11 @@ Table for driver 'mlx90615_microbit_no-errors.py' v0.2.1 without error checking.
 When not stated, using MicroPython v1.12 and default clock speed for the MicroPython/CircuitPython board.
 
 ### 5) References
+
+Documentation :
+1. official [Melexis MLX90615 web page](https://www.melexis.com/en/product/mlx90615/);
+2. [Melexis Comparative Table of InfraRed Thermometer Family - MLX90614 and MLX90615](https://www.melexis.com/-/media/files/documents/product-flyers/quick-reference-infrared-temperature-sensors.pdf);
+3. [Comparative table between the MLX90614 and the MLX90615](http://dtsheet.com/doc/1776025/comparative-table-between-the-mlx90614-and-the-mlx90615-d...);
 
 Other MLX90615 drivers :
 1. ['Arduino library for MLX90615 module from Seeed-Studio'](https://github.com/Seeed-Studio/Digital_Infrared_Temperature_Sensor_MLX90615) has some features like optional SoftI2cMaster library, PEC/CRC-8 checking and writing to EEPROM registers;
