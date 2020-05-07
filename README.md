@@ -200,7 +200,7 @@ Table for driver 'mlx90615.py' v0.2.1 with all features. '[simple]' means driver
 | Pyboard D SF2W  | 10.34 | 161.6 | 2.31 | 34.6 | 1.22 | 0.916 |
 | Pyboard D SF6W  | - | - | - |  - | - | - |
 | ESP8266         | - | - | - |  - | - | - |
-| ESP32           | - | - | - |  - | - | - |
+| ESP32           | 11.36 | 304.5 | 2.67 | 68.2 | 2.65 | 1.93 |
 | ESP32 PSRAM     | - | - | - |  - | - | - |
 | BBC Micro:bit   | - | - | 2.55 | 505.5 |  10.46 | 4.51 |
 | LoPy v1         | - | - | - |  - | - | - |
