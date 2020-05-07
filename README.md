@@ -200,7 +200,7 @@ Table for driver 'mlx90615.py' v0.2.1 with all features. '[simple]' means driver
 | ESP8266         | - | - | - |  - | - | - |
 | ESP32           | - | - | - |  - | - | - |
 | ESP32 PSRAM     | - | - | - |  - | - | - |
-| BBC Micro:bit   | - | - | 2.0 | 400 |  9.5 | 3.3 |
+| BBC Micro:bit   | - | - | 2.55 | 505.5 |  10.46 | 4.51 |
 | LoPy v1         | - | - | - |  - | - | - |
 | LoPy4           | - | - | - |  - | - | - |
 | OpenMV M7       | - | - | - |  - | - | - |
