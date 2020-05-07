@@ -32,7 +32,7 @@ The [Melexis MLX90615 infrared thermometer](https://www.melexis.com/en/product/m
 Boards with MLX90615 :  
 - [SeeedStudio Grove MLX90615 Digital Infrared Temperature Sensor - US$9.00](https://www.seeedstudio.com/Grove-Digital-Infrared-Temperature-Sensor.html);
 <img src="https://files.seeedstudio.com/wiki/Grove-Digital_Infrared_Temperature_Sensor/img/Grove%EF%BC%8DDigital_Infrared_Temperature_Sensor_2.jpg" alt="SeeedStudio Grove MLX90615 Digital Infrared Temperature Sensor" width="400"/>
-- [GY-90615 Digital Infrared Temperature Sensor Module MLX90615 - Alibaba.com - US$7.80 for order of >= 10 units](https://www.alibaba.com/product-detail/GY-90615-Digital-Infrared-Temperature-Sensor_62403370264.html).
+- [GY-90615 Digital Infrared Temperature Sensor Module MLX90615 - Alibaba.com - US$7.80](https://www.alibaba.com/product-detail/GY-90615-Digital-Infrared-Temperature-Sensor_62403370264.html).
 <img src="https://sc01.alicdn.com/kf/Hbc672028c02041b48e41a7a8983e9ba6m.jpg" alt="GY-90615" width="250"/>
 
 ### 2) MicroPython/CircuitPython driver definitions
