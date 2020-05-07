@@ -1,4 +1,4 @@
-# MicroPython (and CircuitPython) MLX90615 driver module
+# MicroPython (and CircuitPython) driver module for MLX90615 infrared temperature sensor
 
 [MicroPython](http://micropython.org/) and [CircuitPython](https://circuitpython.org/) drivers for 
 [MLX90615 infrared temperature sensor](https://www.melexis.com/en/product/mlx90615/), with features :  
@@ -25,8 +25,15 @@ The [Melexis MLX90615 infrared thermometer](https://www.melexis.com/en/product/m
 - features PEC (Packet Error Code, based on CRC-8) for each data/EEPROM reading;
 - usually consumes 1.5 mA in active mode using I2C, or 3 uA in low power/sleep mode;
 - comes factory calibrated in wide temperature range, -20 to 85°C for ambient/sensor temperature and -40 to 115°C for object temperature, with a resolution of 0.02 °C;
-- has factory calibrated accuracy of ±0.2°C for object temperature range 36-39°C and ambient/sensor temperature range 16-40°C, and ±0.3°C for object temperature range 32-42°C;
-- updates the temperature and raw IR data in RAM at a 2 Hz rate (0.5 s period).
+- has factory calibrated accuracy of ±0.2°C for object temperature range 36-39°C and ±0.3°C for object temperature range 32-42°C, when ambient/sensor temperature is between 16-40°C;
+- updates the temperature and raw IR data in RAM at a 2 Hz rate (0.5 s period);
+- recommended object distance is <= 3 cm, like 2 cm, but not touching the sensor.
+
+Boards with MLX90615 :  
+- [SeeedStudio Grove MLX90615 Digital Infrared Temperature Sensor - US$9.00](https://www.seeedstudio.com/Grove-Digital-Infrared-Temperature-Sensor.html);
+<img src="https://files.seeedstudio.com/wiki/Grove-Digital_Infrared_Temperature_Sensor/img/Grove%EF%BC%8DDigital_Infrared_Temperature_Sensor_2.jpg" alt="SeeedStudio Grove MLX90615 Digital Infrared Temperature Sensor" width="400"/>
+- [GY-90615 Digital Infrared Temperature Sensor Module MLX90615 - Alibaba.com - US$7.80 for order of >= 10 units](https://www.alibaba.com/product-detail/GY-90615-Digital-Infrared-Temperature-Sensor_62403370264.html)
+<img src="https://sc01.alicdn.com/kf/Hbc672028c02041b48e41a7a8983e9ba6m.jpg" alt="GY-90615" width="250"/>
 
 ### 2) MicroPython/CircuitPython driver definitions
 
@@ -131,7 +138,15 @@ i2c.scan()   # Output : [91]
 irsensor = mlx90615.MLX90615(i2c)
 ```
 
-###### 3.1.5) [Pycom boards like LoPy4](https://docs.pycom.io/firmwareapi/pycom/machine/i2c/)
+###### 3.1.5) [BBC Micro:bit](https://microbit-micropython.readthedocs.io/en/latest/i2c.html)
+```
+from microbit import i2c
+import mlx90615
+i2c.scan()   # Output : [91]
+irsensor = mlx90615.MLX90615(i2c)
+```
+
+###### 3.1.6) [Pycom boards like LoPy4](https://docs.pycom.io/firmwareapi/pycom/machine/i2c/)
 ```
 import machine
 import mlx90615
@@ -220,4 +235,4 @@ Other MLX90615 drivers :
 1. ['Arduino library for MLX90615 module from Seeed-Studio'](https://github.com/Seeed-Studio/Digital_Infrared_Temperature_Sensor_MLX90615) has some features like optional SoftI2cMaster library, PEC/CRC-8 checking and writing to EEPROM registers;
 2. ['mlx90615-on-raspberryPi from paulvha'](https://github.com/paulvha/mlx90615-on-raspberryPi) is a C driver and interactive software for Raspberry Pi, with many features and excelent documentation complementing the official MLX96015 documentation, like citation of the time delay needed after erasing/writing to the MLX90615 EEPROM;
 3. ['A minimal Arduino library for Melexis MLX90615' from skiselev](https://github.com/skiselev/MLX90615) has only some reading functions;
-4. [MLX90615 library functions from Melexis](https://github.com/melexis/mlx90615-library) is a reference C++ driver with many features and good documentation;
+4. [MLX90615 library functions from Melexis](https://github.com/melexis/mlx90615-library) is a reference C++ driver with many features and good documentation.
