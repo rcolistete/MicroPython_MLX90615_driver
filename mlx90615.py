@@ -1,12 +1,12 @@
 """
 MicroPython driver for MLX90615 IR temperature I2C sensor :
 https://github.com/rcolistete/MicroPython_MLX90615_driver
-Version: 0.2.0 @ 2020/04/27
+Version : 0.2.1 @ 2020/04/27
 Author: Roberto Colistete Jr. (roberto.colistete at gmail.com)
 License: MIT License (https://opensource.org/licenses/MIT)
 """
 
-__version__ = '0.2.0'
+__version__ = '0.2.1'
 
 
 import time
@@ -134,7 +134,7 @@ class MLX90615:
             d = 32768 - d
         return round(100*d/0x4000)
 
-    def set_emissivity(self, value, eeprom_read_check=True, eeprom_write_time=EEPROM_DEFAULT_TIME_MS):
+    def set_emissivity(self, value=100, eeprom_read_check=True, eeprom_write_time=EEPROM_DEFAULT_TIME_MS):
         if (value >= 5) and (value <= 100):
             e = round((value*0x4000)/100)
             try:
@@ -158,7 +158,7 @@ class MLX90615:
         except Exception as err:
             raise Exception("Error reading EEPROM I2C address.\n{}".format(err))
 
-    def set_i2c_address(self, addr, eeprom_read_check=False, eeprom_write_time=EEPROM_DEFAULT_TIME_MS):
+    def set_i2c_address(self, addr=0x5B, eeprom_read_check=False, eeprom_write_time=EEPROM_DEFAULT_TIME_MS):
         if self.address == 0:
             if (addr >= 0x08) and (addr <= 0x77):
                 d = 0x3500 | addr       
@@ -317,6 +317,33 @@ class MLX90615:
             d &= 0xFFFB
             if not object_temp:
                 d |= 0x0004               
+            try:
+                time.sleep_ms(eeprom_write_time)
+                self.write16(_REG_CONFIG, 0x0000, read_check=eeprom_read_check, eeprom_time=eeprom_write_time)
+                time.sleep_ms(eeprom_write_time)
+            except Exception as err:
+                raise Exception("Error erasing EEPROM config register.\n{}".format(err))
+            else:
+                try:
+                    self.write16(_REG_CONFIG, d, read_check=eeprom_read_check, eeprom_time=eeprom_write_time)
+                    time.sleep_ms(eeprom_write_time)
+                except Exception as err:
+                    raise Exception("Error writing EEPROM config register.\n{}".format(err))
+
+    def read_iir_filter(self, pec_check=True):
+        try:
+            return ((self.read16(_REG_CONFIG, crc_check=pec_check) & 0x7000) >> 12)
+        except Exception as err:
+            raise Exception("Error reading config register from EEPROM.\n{}".format(err))
+
+    def set_iir_filter(self, iir=1, eeprom_read_check=True, eeprom_write_time=EEPROM_DEFAULT_TIME_MS):
+        try:
+            d = self.read16(_REG_CONFIG)
+        except Exception as err:
+            raise Exception("Error reading config register from EEPROM. {}".format(err))
+        else:
+            d &= 0x8FFF
+            d |= (iir & 0x0007) << 12
             try:
                 time.sleep_ms(eeprom_write_time)
                 self.write16(_REG_CONFIG, 0x0000, read_check=eeprom_read_check, eeprom_time=eeprom_write_time)
