@@ -191,6 +191,10 @@ irsensor.read_i2c_address()      # Output : 92        # 92 = 0x5C, checked
 
 ### 4) Benchmarks
 
+When not stated, using MicroPython v1.12 firmware, with single float precision, default clock speed for the board and driver on internal flash memory.
+
+OOM = Out Of Memory (error), so the driver version can not fit in the available RAM.
+
 Table for driver 'mlx90615.py' v0.2.1 with all features. '[simple]' means driver 'mlx90615_simple.py'/'mlx90615_microbit_simple.py' v0.2.1 with simple read functions :
 
 | Microcontroller | Import RAM usage (kB) | Import time (ms) | [Simple] Import RAM usage (kB) | [Simple] Import time (ms) | Time to read object temp. (ms) | Time to read object temp. without PEC (ms) |   
@@ -212,15 +216,13 @@ Table for driver 'mlx90615.py' v0.2.1 with all features. '[simple]' means driver
 | ItsyBitsy M4    | - | - | - |  - | - | - | 
 | Adafruit CLUE   | - | - | - |  - | - | - |
 
-Table for driver 'mlx90615_microbit_no-errors.py' v0.2.1 without error checking. '[simple]' means driver 'mlx90615_simple_no-errors.py'/'mlx90615_microbit_simple_no-errors.py' v0.2.1 with simple read functions and without error checking :
+Table for driver 'mlx90615_no-errors.py'/'mlx90615_microbit_no-errors.py' v0.2.1 without error checking. '[simple]' means driver 'mlx90615_simple_no-errors.py'/'mlx90615_microbit_simple_no-errors.py' v0.2.1 with simple read functions and without error checking :
 
 | Microcontroller | Import RAM usage (kB) | Import time (ms) | [Simple] Import RAM usage (kB) | [Simple] Import time (ms) |  Time to read object temp. without PEC (ms) |   
 |:------|:-----:|:-----:|:----:|:----:|:-----:|
-| ESP8266         | 4.641 | 564.6  | -     |   -    | 1.84 |
+| ESP8266         | 4.641 | 564.6  | 1.125 | 105.9  | 1.84 |
 | BBC Micro:bit   | 2.672 | 603.29 | 1.500 | 240.42 | 4.13 |
 | ItsyBitsy M0    | - | - | - |  - | - | 
-
-When not stated, using MicroPython v1.12 firmware, with single float precision, default clock speed for the board and driver on internal flash memory.
 
 ### 5) References
 
