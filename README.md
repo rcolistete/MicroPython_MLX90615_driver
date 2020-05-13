@@ -43,9 +43,11 @@ The 'no-errors' version of the driver doesn't check the PEC (Packet Error Code, 
 
 The 'simple' version of the driver has just the most important functions : read ambient and object temperatures, read unique ID, read EEPROM and read of any register. Advantages : robust, lower RAM usage. Disadvantages : not possible to change MLX90615 configuration, less features.
 
-The BBC Micro:bit version, even not the 'simple' one, is limited to fewer functions due to RAM limitations, so there are no sleep/wake, PWM and IIR filter functions.
+The 'simple' and 'no-errors' version combined the above limitations.
 
-The full version of the driver is described in the tables below.
+The BBC Micro:bit full version is limited to fewer functions due to RAM limitations, so there are no sleep/wake, PWM and IIR filter functions.
+
+The full version of the driver is described in the table below.
 
 | Constants | Description |
 | -------- | ----------- |
@@ -191,7 +193,7 @@ irsensor.read_i2c_address()      # Output : 92        # 92 = 0x5C, checked
 
 ### 4) Benchmarks
 
-When not stated, using MicroPython v1.12 firmware, with single float precision, default clock speed for the board and driver on internal flash memory.
+When not stated, using MicroPython v1.12 firmware, with single float precision, default clock speed for the board, driver on internal flash memory and wireless disabled.
 
 OOM = Out Of Memory (error), so the driver version can not fit in the available RAM.
 
@@ -203,7 +205,7 @@ Table for driver 'mlx90615.py' v0.2.1 with all features. '[simple]' means driver
 | Pyboard v1.1    | 10.344 | 177.334 | 2.313 |  37.668 |  1.20 | 0.83  |
 | Pyboard D SF2W  | 10.344 | 161.65  | 2.313 |  34.64  |  1.23 | 0.92  |
 | Pyboard D SF6W  | 11.109 | 128.29  | 2.109 |  27.29  |  1.06 | 0.801 |
-| ESP8266         |    OOM |   OOM   | 2.547 | 203.6   |  4.7  | 2.6   |
+| ESP8266         |    OOM |   OOM   | 2.547 | 202.9   |  3.9  | 2.1   |
 | ESP32           | 11.359 | 304.5   | 2.672 |  68.3   |  2.63 | 1.92  |
 | ESP32 PSRAM     | 11.359 | 563.5   | 2.672 | 112.8   |  2.35 | 1.80  |
 | BBC Micro:bit   | OOM    |   OOM   | 2.547 | 505.49  | 10.5 |  4.5   |
@@ -220,8 +222,8 @@ Table for driver 'mlx90615_no-errors.py'/'mlx90615_microbit_no-errors.py' v0.2.1
 
 | Microcontroller | Import RAM usage (kB) | Import time (ms) | [Simple] Import RAM usage (kB) | [Simple] Import time (ms) |  Time to read object temp. without PEC (ms) |   
 |:------|:-----:|:-----:|:----:|:----:|:-----:|
-| ESP8266         | 4.641 | 564.6  | 1.125 | 105.9  | 1.84 |
-| BBC Micro:bit   | 2.672 | 603.29 | 1.500 | 240.42 | 4.13 |
+| ESP8266         | 4.641 | 564    | 1.125 | 105.8  | 1.807 |
+| BBC Micro:bit   | 2.672 | 603.29 | 1.500 | 240.42 | 4.13  |
 | ItsyBitsy M0    | - | - | - |  - | - | 
 
 ### 5) References
