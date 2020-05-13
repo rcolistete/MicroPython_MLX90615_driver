@@ -195,14 +195,14 @@ Table for driver 'mlx90615.py' v0.2.1 with all features. '[simple]' means driver
 
 | Microcontroller | Import RAM usage (kB) | Import time (ms) | [Simple] Import RAM usage (kB) | [Simple] Import time (ms) | Time to read object temp. (ms) | Time to read object temp. without PEC (ms) |   
 |:------|:-----:|:-----:|:----:|:----:|:-----:|:----:|
-| Pyboard v1.1    | - | - | - |  - | - | - |
-| Pyboard Lite    | - | - | - |  - | - | - |
-| Pyboard D SF2W  | 10.34 | 161.6 | 2.31 | 34.6 | 1.22 | 0.916 |
-| Pyboard D SF6W  | - | - | - |  - | - | - |
-| ESP8266         | - | - | - |  - | - | - |
-| ESP32           | 11.36 | 304.5 | 2.67 | 68.2 | 2.65 | 1.93 |
-| ESP32 PSRAM     | - | - | - |  - | - | - |
-| BBC Micro:bit   | - | - | 2.55 | 505.5 |  10.46 | 4.51 |
+| Pyboard Lite    | 10.141 | 291.385 | 2.109 |  61.382 |  1.59 | 0.996 |
+| Pyboard v1.1    | 10.344 | 177.334 | 2.313 |  37.668 |  1.20 | 0.83  |
+| Pyboard D SF2W  | 10.344 | 161.65  | 2.313 |  34.64  |  1.23 | 0.92  |
+| Pyboard D SF6W  | 11.109 | 128.29  | 2.109 |  27.29  |  1.06 | 0.801 |
+| ESP8266         |    OOM |   OOM   | 2.547 | 203.6   |  4.7  | 2.6   |
+| ESP32           | 11.359 | 304.5   | 2.672 |  68.3   |  2.63 | 1.92  |
+| ESP32 PSRAM     | 11.359 | 563.5   | 2.672 | 112.8   |  2.35 | 1.80  |
+| BBC Micro:bit   | OOM    |   OOM   | 2.547 | 505.49  | 10.5 |  4.5   |
 | LoPy v1         | - | - | - |  - | - | - |
 | LoPy4           | - | - | - |  - | - | - |
 | OpenMV M7       | - | - | - |  - | - | - |
@@ -216,11 +216,11 @@ Table for driver 'mlx90615_microbit_no-errors.py' v0.2.1 without error checking.
 
 | Microcontroller | Import RAM usage (kB) | Import time (ms) | [Simple] Import RAM usage (kB) | [Simple] Import time (ms) |  Time to read object temp. without PEC (ms) |   
 |:------|:-----:|:-----:|:----:|:----:|:-----:|
-| ESP8266         | - | - | - |  - | - |
-| BBC Micro:bit   | 2.67 | 603.3 | 1.50 | 240.4 | 4.13 |
+| ESP8266         | 4.641 | 564.6  | -     |   -    | 1.84 |
+| BBC Micro:bit   | 2.672 | 603.29 | 1.500 | 240.42 | 4.13 |
 | ItsyBitsy M0    | - | - | - |  - | - | 
 
-When not stated, using MicroPython v1.12 and default clock speed for the MicroPython/CircuitPython board.
+When not stated, using MicroPython v1.12 firmware, with single float precision, default clock speed for the board and driver on internal flash memory.
 
 ### 5) References
 
