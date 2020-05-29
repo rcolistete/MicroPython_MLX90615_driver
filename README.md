@@ -154,7 +154,7 @@ irsensor = mlx90615.MLX90615(i2c)
 ```
 import machine
 import mlx90615
-i2c = machine.I2C(2, I2C.MASTER, baudrate=100000)   # Software I2C
+i2c = machine.I2C(2, baudrate=100000)   # Software I2C
 i2c.scan()   # Output : [91]
 irsensor = mlx90615.MLX90615(i2c)
 ```
@@ -201,16 +201,16 @@ Table for driver 'mlx90615.py' v0.2.1 with all features. '[simple]' means driver
 
 | Microcontroller | Import RAM usage (kB) | Import time (ms) | [Simple] Import RAM usage (kB) | [Simple] Import time (ms) | Time to read object temp. (ms) | Time to read object temp. without PEC (ms) |   
 |:------|:-----:|:-----:|:----:|:----:|:-----:|:----:|
-| Pyboard Lite    | 10.141 | 291.385 | 2.109 |  61.382 |  1.59 | 0.996 |
-| Pyboard v1.1    | 10.344 | 177.334 | 2.313 |  37.668 |  1.20 | 0.83  |
-| Pyboard D SF2W  | 10.344 | 161.65  | 2.313 |  34.64  |  1.23 | 0.92  |
-| Pyboard D SF6W  | 11.109 | 128.29  | 2.109 |  27.29  |  1.06 | 0.801 |
-| ESP8266         |    OOM |   OOM   | 2.547 | 202.9   |  3.9  | 2.1   |
-| ESP32           | 11.359 | 304.5   | 2.672 |  68.3   |  2.63 | 1.92  |
-| ESP32 PSRAM     | 11.359 | 563.5   | 2.672 | 112.8   |  2.35 | 1.80  |
-| BBC Micro:bit   | OOM    |   OOM   | 2.547 | 505.49  | 10.5 |  4.5   |
-| LoPy v1         | - | - | - |  - | - | - |
-| LoPy4           | - | - | - |  - | - | - |
+| Pyboard Lite    | 10.141 | 291.385 | 2.109 |  61.382 |  1.59  | 0.996 |
+| Pyboard v1.1    | 10.344 | 177.334 | 2.313 |  37.668 |  1.20  | 0.83  |
+| Pyboard D SF2W  | 10.344 | 161.65  | 2.313 |  34.64  |  1.23  | 0.92  |
+| Pyboard D SF6W  | 11.109 | 128.29  | 2.109 |  27.29  |  1.06  | 0.801 |
+| ESP8266         |  OOM   |  OOM    | 2.547 | 202.9   |  3.9   | 2.1   |
+| ESP32           | 11.359 | 304.5   | 2.672 |  68.3   |  2.63  | 1.92  |
+| ESP32 PSRAM     | 11.359 | 563.5   | 2.672 | 112.8   |  2.35  | 1.80  |
+| BBC Micro:bit   |  OOM   |  OOM    | 2.547 | 505.49  | 10.5   | 4.5   |
+| LoPy v1         | 11.578 | 713.8   | 2.813 | 154.57  |  2.067 | 1.41  |
+| LoPy4           | 11.297 | 829.0   | 2.516 | 166.13  |  2.14  | 1.49  |
 | OpenMV M7       | - | - | - |  - | - | - |
 | OpenMV H7       | - | - | - |  - | - | - |
 | Sipeed MAix BiT | - | - | - |  - | - | - |
@@ -225,6 +225,17 @@ Table for driver 'mlx90615_no-errors.py'/'mlx90615_microbit_no-errors.py' v0.2.1
 | ESP8266         | 4.641 | 564    | 1.125 | 105.8  | 1.807 |
 | BBC Micro:bit   | 2.672 | 603.29 | 1.500 | 240.42 | 4.13  |
 | ItsyBitsy M0    | - | - | - |  - | - | 
+
+Pyboard Lite v1.0, default clock @ 96 MHz.  
+Pyboard v1.1, default clock @ 168 MHz.  
+Pyboard D SF2W, default clock @ 120 MHz.  
+Pyboard D SF6W, firmware with double precision, default clock @ 144 MHz.  
+ESP8266 in Wemos D1 Mini, default clock @ 80 MHz.  
+BBC Micro:bit, with MicroPython v1.9.2-34-gd64154c73, micro:bit v1.0.1, default clock @ 16 MHz.  
+ESP32 in M5Stack Core Basic, default clock @ 160 MHz.  
+ESP32 PSRAM in M5Stack Core Gray PSRAM, default clock @ 160 MHz.  
+LoPy v1 has a ESP32 without PSRAM, LoPy4 with PSRAM, both with Pycom MicroPython 1.20.2.rc7, default clock @ 160 MHz.  
+
 
 ### 5) References
 
